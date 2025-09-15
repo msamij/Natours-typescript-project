@@ -1,0 +1,28 @@
+{
+  "name": "natours-ts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "nodemon --watch src --exec npx tsx src/server.ts"
+  },
+  "keywords": [],
+  "author": "Muhammad Sami",
+  "license": "ISC",
+  "packageManager": "pnpm@10.16.1",
+  "dependencies": {
+    "express": "^5.1.0",
+    "morgan": "^1.10.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^24.4.0",
+    "nodemon": "^3.1.10",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  }
+}
