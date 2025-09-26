@@ -1,13 +1,20 @@
-import express, { type NextFunction, type Response, type Express } from 'express';
+import express, { type Express, type NextFunction, type Response } from 'express';
 import morgan from 'morgan';
+import path from 'path';
 import tourRouter from './routes/tourRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import { type RequestWithTime } from './types/Request.js';
 
+const __dirname = path.resolve();
+
 const app: Express = express();
 
-app.use(morgan('dev'));
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
+
 app.use(express.json());
+app.use(express.static(`${__dirname}/public`));
 
 app.use((req: RequestWithTime, res: Response, next: NextFunction) => {
   req.requestTime = new Date().toISOString();

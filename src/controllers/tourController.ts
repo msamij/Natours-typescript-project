@@ -1,4 +1,4 @@
-import { type Request, type Response } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 import fs from 'fs';
 import path from 'path';
 import type { tourSimple } from '../routes/types.js';
@@ -7,6 +7,27 @@ import type { RequestWithTime } from '../types/Request.js';
 const __dirname = path.resolve();
 
 const tours: tourSimple[] = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`, 'utf-8'));
+
+export const checkID = (req: Request, res: Response, next: NextFunction, val: string) => {
+  const id = parseInt(req.params.id!);
+  if (id > tours.length) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Invalid ID',
+    });
+  }
+  next();
+};
+
+export const checkBody = (req: Request, res: Response, next: NextFunction) => {
+  if (!req.body.name || !req.body.price) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Missing name or price',
+    });
+  }
+  next();
+};
 
 export const getAllTours = (req: RequestWithTime, res: Response) => {
   res.status(200).json({
@@ -21,13 +42,6 @@ export const getAllTours = (req: RequestWithTime, res: Response) => {
 
 export const getTour = (req: Request, res: Response) => {
   const id = parseInt(req.params.id!);
-  if (id > tours.length) {
-    return res.status(404).json({
-      status: 'fail',
-      message: 'Invalid ID',
-    });
-  }
-
   const tour = tours.find(item => item.id === id);
   res.status(200).json({
     status: 'success',
@@ -54,14 +68,6 @@ export const createTour = (req: Request, res: Response) => {
 };
 
 export const updateTour = (req: Request, res: Response) => {
-  const id = parseInt(req.params.id!);
-  if (id > tours.length) {
-    return res.status(404).json({
-      status: 'fail',
-      message: 'Invalid ID',
-    });
-  }
-
   res.status(200).json({
     status: 'success',
     data: {
@@ -71,14 +77,6 @@ export const updateTour = (req: Request, res: Response) => {
 };
 
 export const deleteTour = (req: Request, res: Response) => {
-  const id = parseInt(req.params.id!);
-  if (id > tours.length) {
-    return res.status(404).json({
-      status: 'fail',
-      message: 'Invalid ID',
-    });
-  }
-
   res.status(204).json({
     status: 'success',
     data: null,
