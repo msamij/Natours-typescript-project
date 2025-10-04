@@ -16,7 +16,7 @@ if (process.env.NODE_ENV === 'development') {
 app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
 
-app.use((req: RequestWithTime, res: Response, next: NextFunction) => {
+app.use((req: RequestWithTime, _: Response, next: NextFunction) => {
   req.requestTime = new Date().toISOString();
   next();
 });

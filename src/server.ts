@@ -1,18 +1,11 @@
 import './config.js';
 import mongoose from 'mongoose';
 import app from './index.js';
-
-function getEnvVar(name: string): string {
-  const value = process.env[name];
-  if (!value) {
-    throw new Error(`Environment variable ${name} is not defined`);
-  }
-  return value;
-}
+import { getEnvVar } from './config.js';
 
 const DB = getEnvVar('DATABASE').replace('<PASSWORD>', getEnvVar('DATABASE_PASSWORD'));
 
-mongoose.connect(DB).then(con => {
+mongoose.connect(DB).then(() => {
   console.log('DB connection successfull');
 });
 
