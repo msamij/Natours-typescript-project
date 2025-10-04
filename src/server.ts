@@ -13,7 +13,6 @@ function getEnvVar(name: string): string {
 const DB = getEnvVar('DATABASE').replace('<PASSWORD>', getEnvVar('DATABASE_PASSWORD'));
 
 mongoose.connect(DB).then(con => {
-  console.log(con.connections);
   console.log('DB connection successfull');
 });
 

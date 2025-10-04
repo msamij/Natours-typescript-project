@@ -1,70 +1,35 @@
-import { type Request, type Response, type NextFunction } from 'express';
-import fs from 'fs';
-import path from 'path';
-import type { tourSimple } from '../routes/types.js';
+import { type NextFunction, type Request, type Response } from 'express';
 import type { RequestWithTime } from '../types/Request.js';
 import Tour from '../models/tourModel.js';
-
-const __dirname = path.resolve();
-
-const tours: tourSimple[] = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`, 'utf-8'));
-
-export const checkID = (req: Request, res: Response, next: NextFunction, val: string) => {
-  const id = parseInt(req.params.id!);
-  if (id > tours.length) {
-    return res.status(404).json({
-      status: 'fail',
-      message: 'Invalid ID',
-    });
-  }
-  next();
-};
-
-export const checkBody = (req: Request, res: Response, next: NextFunction) => {
-  if (!req.body.name || !req.body.price) {
-    return res.status(400).json({
-      status: 'fail',
-      message: 'Missing name or price',
-    });
-  }
-  next();
-};
 
 export const getAllTours = (req: RequestWithTime, res: Response) => {
   res.status(200).json({
     status: 'success',
     requestedAt: req.requestTime,
-    results: tours.length,
-    data: {
-      tours,
-    },
+    // results: tours.length,
+    // data: {
+    //   tours,
+    // },
   });
 };
 
 export const getTour = (req: Request, res: Response) => {
   const id = parseInt(req.params.id!);
-  const tour = tours.find(item => item.id === id);
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour,
-    },
-  });
+  // const tour = tours.find(item => item.id === id);
+  // res.status(200).json({
+  //   status: 'success',
+  //   data: {
+  //     tour,
+  //   },
+  // });
 };
 
 export const createTour = (req: Request, res: Response) => {
-  const newId = tours![tours.length - 1]!.id + 1;
-  const newTour = Object.assign({ id: newId }, req.body);
-
-  tours.push(newTour);
-
-  fs.writeFile(`${__dirname}/dev-data/data/tours-simple.json`, JSON.stringify(tours), err => {
-    res.status(201).json({
-      status: 'sucess',
-      data: {
-        tour: newTour,
-      },
-    });
+  res.status(201).json({
+    status: 'sucess',
+    // data: {
+    //   tour: newTour,
+    // },
   });
 };
 
