@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import type { tourSimple } from '../routes/types.js';
 import type { RequestWithTime } from '../types/Request.js';
+import Tour from '../models/tourModel.js';
 
 const __dirname = path.resolve();
 
