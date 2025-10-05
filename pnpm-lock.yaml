@@ -20,6 +20,9 @@ importers:
       morgan:
         specifier: ^1.10.1
         version: 1.10.1
+      qs:
+        specifier: ^6.14.0
+        version: 6.14.0
     devDependencies:
       '@types/express':
         specifier: ^5.0.3
@@ -30,6 +33,9 @@ importers:
       '@types/node':
         specifier: ^24.4.0
         version: 24.4.0
+      '@types/qs':
+        specifier: ^6.14.0
+        version: 6.14.0
       nodemon:
         specifier: ^3.1.10
         version: 3.1.10
