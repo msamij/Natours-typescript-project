@@ -1,10 +1,20 @@
-import { type Request, type Response } from 'express';
+import { type NextFunction, type Request, type Response } from 'express';
 import qs from 'qs';
 import Tour from '../models/tourModel.js';
+
+export const aliasTopTour = async (req: Request, _: Response, next: NextFunction) => {
+  const url = new URL(req.originalUrl, `http://${req.headers.host}`);
+  url.searchParams.set('limit', '5');
+  url.searchParams.set('sort', '-ratingsAverage,price');
+  url.searchParams.set('fields', 'name,price,ratingsAverage,summary,difficulty');
+  req.url = url.pathname + url.search;
+  next();
+};
 
 export const getAllTours = async (req: Request, res: Response) => {
   try {
     const queryObj = { ...qs.parse(req.query as any) };
+
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
     excludedFields.forEach(el => delete queryObj[el]);
 
