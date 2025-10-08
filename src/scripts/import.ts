@@ -4,11 +4,12 @@ import path from 'path';
 import mongoose from 'mongoose';
 import Tour from '../models/tourModel.js';
 import { getEnvVar } from '../config.js';
+import { logger } from '../logger.js';
 
 const DB = getEnvVar('DATABASE').replace('<PASSWORD>', getEnvVar('DATABASE_PASSWORD'));
 
 mongoose.connect(DB).then(() => {
-  console.log('DB connection successfull');
+  logger.info('DB connection succesfull');
 });
 
 const __dirname = path.resolve();
@@ -18,9 +19,9 @@ const tours = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simpl
 const importData = async () => {
   try {
     await Tour.create(tours);
-    console.info('Data loaded successfully!');
+    logger.info('Data loaded successfully!');
   } catch (err) {
-    console.error('An error occured wrong while loading data:', err);
+    logger.error(`An error occured wrong while loading data: ${err}`);
   } finally {
     process.exit();
   }
@@ -29,9 +30,9 @@ const importData = async () => {
 const deleteData = async () => {
   try {
     await Tour.deleteMany();
-    console.info('Data deleted successfully!');
+    logger.info('Data deleted successfully!');
   } catch (err) {
-    console.error('An error occured wrong while deleting data:', err);
+    logger.error(`An error occured wrong while deleting data: ${err}`);
   } finally {
     process.exit();
   }
