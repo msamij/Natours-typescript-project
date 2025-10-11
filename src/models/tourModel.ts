@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { type InferSchemaType } from 'mongoose';
 import slugify from '../imports/slugify.js';
 
 const tourSchema = new mongoose.Schema(
@@ -55,6 +55,10 @@ const tourSchema = new mongoose.Schema(
       select: false,
     },
     startDates: [Date],
+    secretTour: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -66,9 +70,15 @@ tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
 
-// DOCUMENT MIDDLEWARE: runs before save() and create()
 tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
+  next();
+});
+
+type TourDocument = mongoose.Query<InferSchemaType<typeof tourSchema>, {}>;
+
+tourSchema.pre<TourDocument>(/^find/, function (next) {
+  this.find({ secretTour: { $ne: true } });
   next();
 });
 
