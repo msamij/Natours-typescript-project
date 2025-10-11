@@ -1,7 +1,8 @@
+import type { Query } from 'mongoose';
 import qs, { type ParsedQs } from 'qs';
 
-export class APIFeatures {
-  constructor(public query: any, public queryString: ParsedQs) {}
+export class APIFeatures<T> {
+  constructor(public query: Query<T[], T>, public queryString: ParsedQs) {}
 
   filter() {
     const queryObj = { ...qs.parse(this.queryString as any) };
