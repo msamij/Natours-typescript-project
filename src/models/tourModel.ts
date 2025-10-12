@@ -1,5 +1,6 @@
 import mongoose, { type InferSchemaType } from 'mongoose';
 import slugify from '../imports/slugify.js';
+import { logger } from '../logger.js';
 
 const tourSchema = new mongoose.Schema(
   {
@@ -75,10 +76,17 @@ tourSchema.pre('save', function (next) {
   next();
 });
 
-type TourDocument = mongoose.Query<InferSchemaType<typeof tourSchema>, {}>;
+type TourSchemaType = InferSchemaType<typeof tourSchema> & { start: number };
+type TourDocument = mongoose.Query<TourSchemaType, {}> & TourSchemaType;
 
 tourSchema.pre<TourDocument>(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
+  this.start = Date.now();
+  next();
+});
+
+tourSchema.post<TourSchemaType>(/^find/, function (_, next) {
+  logger.info(`Query took ${Date.now() - this.start} milliseconds!`);
   next();
 });
 
