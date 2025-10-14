@@ -2,6 +2,7 @@ import { type NextFunction, type Request, type Response } from 'express';
 import Tour from '../models/tourModel.js';
 import type { RequestWithYear } from '../types/Request.js';
 import { APIFeatures } from '../utils/apiFeatures.js';
+import type QueryString from 'qs';
 
 export const aliasTopTour = async (req: Request, _: Response, next: NextFunction) => {
   const url = new URL(req.originalUrl, `http://${req.headers.host}`);
@@ -11,6 +12,8 @@ export const aliasTopTour = async (req: Request, _: Response, next: NextFunction
   req.url = url.pathname + url.search;
   next();
 };
+
+type ControllerFn = (req: Request, res: Response, next: NextFunction) => Promise<void>;
 
 export const getAllTours = async (req: Request, res: Response) => {
   try {
@@ -32,7 +35,7 @@ export const getAllTours = async (req: Request, res: Response) => {
   }
 };
 
-export const getTour = async (req: Request, res: Response) => {
+export const getTour = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const tour = await Tour.findById(req.params.id);
 
