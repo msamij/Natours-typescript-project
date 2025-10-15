@@ -2,9 +2,9 @@ import { type NextFunction, type Request, type Response } from 'express';
 import Tour from '../models/tourModel.js';
 import type { RequestWithYear } from '../types/Request.js';
 import { APIFeatures } from '../utils/apiFeatures.js';
-import type QueryString from 'qs';
+import { catchAsync } from '../utils/catchAsync.js';
 
-export const aliasTopTour = async (req: Request, _: Response, next: NextFunction) => {
+export const aliasTopTour = async (req: Request, _res: Response, next: NextFunction) => {
   const url = new URL(req.originalUrl, `http://${req.headers.host}`);
   url.searchParams.set('limit', '5');
   url.searchParams.set('sort', '-ratingsAverage,price');
@@ -13,29 +13,20 @@ export const aliasTopTour = async (req: Request, _: Response, next: NextFunction
   next();
 };
 
-type ControllerFn = (req: Request, res: Response, next: NextFunction) => Promise<void>;
+export const getAllTours = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
+  const features = new APIFeatures(Tour.find(), req.query).filter().sort().limitFields().paginate();
+  const tours = await features.query;
 
-export const getAllTours = async (req: Request, res: Response) => {
-  try {
-    const features = new APIFeatures(Tour.find(), req.query).filter().sort().limitFields().paginate();
-    const tours = await features.query;
+  res.status(200).json({
+    status: 'success',
+    results: tours.length,
+    data: {
+      tours,
+    },
+  });
+});
 
-    res.status(200).json({
-      status: 'success',
-      results: tours.length,
-      data: {
-        tours,
-      },
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: 'fail',
-      message: err,
-    });
-  }
-};
-
-export const getTour = async (req: Request, res: Response, next: NextFunction) => {
+export const getTour = async (req: Request, res: Response, _next: NextFunction) => {
   try {
     const tour = await Tour.findById(req.params.id);
 
@@ -53,23 +44,16 @@ export const getTour = async (req: Request, res: Response, next: NextFunction) =
   }
 };
 
-export const createTour = async (req: Request, res: Response) => {
-  try {
-    const newTour = await Tour.create(req.body);
+export const createTour = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
+  const newTour = await Tour.create(req.body);
 
-    res.status(201).json({
-      status: 'sucess',
-      data: {
-        tour: newTour,
-      },
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: 'fail',
-      messaage: err,
-    });
-  }
-};
+  res.status(201).json({
+    status: 'sucess',
+    data: {
+      tour: newTour,
+    },
+  });
+});
 
 export const updateTour = async (req: Request, res: Response) => {
   try {
@@ -108,7 +92,7 @@ export const deleteTour = async (req: Request, res: Response) => {
   }
 };
 
-export const getTourStats = async (_: Request, res: Response) => {
+export const getTourStats = async (_req: Request, res: Response) => {
   try {
     const stats = await Tour.aggregate([
       {

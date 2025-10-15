@@ -1,7 +1,7 @@
 import express from 'express';
 import type { AppError } from '../utils/appError.js';
 
-export const errorHandler: express.ErrorRequestHandler = (err: AppError, _, res, __) => {
+export const errorHandler: express.ErrorRequestHandler = (err: AppError, _req, res, _next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'Error';
 
