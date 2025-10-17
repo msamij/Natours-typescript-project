@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
-    "dev": "nodemon --watch src --exec npx tsx src/server.ts"
+    "dev": "tsc --noEmit && nodemon --watch src --exec npx tsx src/server.ts"
   },
   "keywords": [],
   "author": "Muhammad Sami",
