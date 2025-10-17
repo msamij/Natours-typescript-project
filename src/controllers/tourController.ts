@@ -3,6 +3,7 @@ import Tour from '../models/tourModel.js';
 import type { RequestWithYear } from '../types/Request.js';
 import { APIFeatures } from '../utils/apiFeatures.js';
 import { catchAsync } from '../utils/catchAsync.js';
+import { AppError } from '../utils/appError.js';
 
 export const aliasTopTour = async (req: Request, _res: Response, next: NextFunction) => {
   const url = new URL(req.originalUrl, `http://${req.headers.host}`);
@@ -26,8 +27,12 @@ export const getAllTours = catchAsync(async (req: Request, res: Response, _next:
   });
 });
 
-export const getTour = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
+export const getTour = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const tour = await Tour.findById(req.params.id);
+
+  if (!tour) {
+    return next(new AppError(`No tour found with the ID: ${req.params.id}`, 404));
+  }
 
   res.status(200).json({
     status: 'success',
@@ -48,11 +53,15 @@ export const createTour = catchAsync(async (req: Request, res: Response, _next: 
   });
 });
 
-export const updateTour = catchAsync(async (req: Request, res: Response) => {
+export const updateTour = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
   });
+
+  if (!tour) {
+    return next(new AppError(`No tour found with the ID: ${req.params.id}`, 404));
+  }
 
   res.status(200).json({
     status: 'success',
@@ -62,8 +71,12 @@ export const updateTour = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-export const deleteTour = catchAsync(async (req: Request, res: Response) => {
-  await Tour.findByIdAndDelete(req.params.id);
+export const deleteTour = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const tour = await Tour.findByIdAndDelete(req.params.id);
+
+  if (!tour) {
+    return next(new AppError(`No tour found with the ID: ${req.params.id}`, 404));
+  }
 
   res.status(204).json({
     status: 'success',
