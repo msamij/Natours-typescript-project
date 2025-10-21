@@ -2,6 +2,11 @@ import express, { type Response } from 'express';
 import { AppError } from '../utils/appError.js';
 import { logger } from '../logger.js';
 
+const handleCastErrorDB = (err: AppError) => {
+  const message = `Invalid ${err.path}: ${err.value}.`;
+  return new AppError(message, 400);
+};
+
 const sendErrorDev = (err: AppError, res: Response) => {
   res.status(err.statusCode).json({
     status: err.status,
@@ -34,6 +39,15 @@ export const errorHandler: express.ErrorRequestHandler = (err: AppError, _req, r
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === 'production') {
-    sendErrorProd(err, res);
+    let errCopy: AppError = { ...err };
+
+    // Making explicit assignment here, since error name and message are not being copied.
+    errCopy.name = err.name;
+    errCopy.message = err.message;
+
+    if (errCopy.name === 'CastError') {
+      errCopy = handleCastErrorDB(err);
+    }
+    sendErrorProd(errCopy, res);
   }
 };
