@@ -17,7 +17,7 @@ type appErrorType = {
 export const catchAsync = <T extends Request = Request>(fn: ControllerFn<T>) => {
   return (req: Request, res: Response, next: NextFunction) => {
     fn(req as T, res, next).catch(err => {
-      const error: appErrorType = Object.assign(new AppError(err.message, 404), err);
+      const error: appErrorType = Object.assign(new AppError(err.message, 400), err);
       error.name = err.name;
       next(error);
     });
