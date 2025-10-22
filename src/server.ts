@@ -1,8 +1,15 @@
-import './config.js';
 import mongoose from 'mongoose';
+import { logger } from './logger.js';
+
+process.on('uncaughtException', (err: any) => {
+  logger.info('UNCAUGHT EXCEPTION 💥 Shutting down...');
+  logger.error(err.name, err.message);
+  process.exit(1);
+});
+
+import './config.js';
 import { getEnvVar } from './config.js';
 import app from './index.js';
-import { logger } from './logger.js';
 
 const DB = getEnvVar('DATABASE').replace('<PASSWORD>', getEnvVar('DATABASE_PASSWORD'));
 
@@ -21,8 +28,8 @@ const server = app.listen(port, () => {
 });
 
 process.on('unhandledRejection', (err: any) => {
-  logger.error(err.name, err.message);
   logger.info('UNHANDLED REJECTION 💥 Shutting down...');
+  logger.error(err.name, err.message);
   server.close(() => {
     process.exit(1);
   });
