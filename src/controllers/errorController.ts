@@ -1,9 +1,20 @@
 import express, { type Response } from 'express';
-import { AppError } from '../utils/appError.js';
 import { logger } from '../logger.js';
+import { AppError } from '../utils/appError.js';
 
 const handleCastErrorDB = (err: AppError) => {
   const message = `Invalid ${err.path}: ${err.value}.`;
+  return new AppError(message, 400);
+};
+
+const handleDuplicateFieldsDB = (err: AppError) => {
+  const message = `Duplicate field value: "${err.keyValue.name}." Please use another value`;
+  return new AppError(message, 400);
+};
+
+const handleValidationErrorDB = (err: AppError) => {
+  const errors = Object.values(err.errors).map((el: any) => el.message);
+  const message = `Invalid input data. ${errors.join('. ')}`;
   return new AppError(message, 400);
 };
 
@@ -46,7 +57,15 @@ export const errorHandler: express.ErrorRequestHandler = (err: AppError, _req, r
     errCopy.message = err.message;
 
     if (errCopy.name === 'CastError') {
-      errCopy = handleCastErrorDB(err);
+      errCopy = handleCastErrorDB(errCopy);
+    }
+
+    if (errCopy.code === 11000) {
+      errCopy = handleDuplicateFieldsDB(errCopy);
+    }
+
+    if (errCopy.name === 'ValidationError') {
+      errCopy = handleValidationErrorDB(errCopy);
     }
     sendErrorProd(errCopy, res);
   }

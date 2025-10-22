@@ -2,8 +2,8 @@ import { type NextFunction, type Request, type Response } from 'express';
 import Tour from '../models/tourModel.js';
 import type { RequestWithYear } from '../types/Request.js';
 import { APIFeatures } from '../utils/apiFeatures.js';
-import { catchAsync } from '../utils/catchAsync.js';
 import { AppError } from '../utils/appError.js';
+import { catchAsync } from '../utils/catchAsync.js';
 
 export const aliasTopTour = async (req: Request, _res: Response, next: NextFunction) => {
   const url = new URL(req.originalUrl, `http://${req.headers.host}`);
