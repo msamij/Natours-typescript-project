@@ -14,7 +14,7 @@ const handleDuplicateFieldsDB = (err: AppError) => {
    * https://stackoverflow.com/questions/171480/regex-grabbing-values-between-quotation-marks
    */
   const value = err.message.match(/(["'])(?:\\.|[^\\])*?\1/)![0];
-  const message = `Duplicate field value: "${value}." Please use another value`;
+  const message = `Duplicate field value: ${value}. Please use another value`;
   return new AppError(message, 400);
 };
 
