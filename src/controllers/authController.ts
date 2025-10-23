@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
 import { catchAsync } from '../utils/catchAsync.js';
 
-export const signup = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+export const signup = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
