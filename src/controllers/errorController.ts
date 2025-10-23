@@ -8,7 +8,13 @@ const handleCastErrorDB = (err: AppError) => {
 };
 
 const handleDuplicateFieldsDB = (err: AppError) => {
-  const message = `Duplicate field value: "${err.keyValue.name}." Please use another value`;
+  /**
+   * We must extract error field from our error object and since it's wrapped in quotes.
+   * had to do it using regex from stack overflow:
+   * https://stackoverflow.com/questions/171480/regex-grabbing-values-between-quotation-marks
+   */
+  const value = err.message.match(/(["'])(?:\\.|[^\\])*?\1/)![0];
+  const message = `Duplicate field value: "${value}." Please use another value`;
   return new AppError(message, 400);
 };
 
