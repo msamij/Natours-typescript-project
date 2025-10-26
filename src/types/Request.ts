@@ -9,3 +9,7 @@ export interface RequestWithYear extends Request {
     year: string;
   };
 }
+
+export interface RequestWithUser extends Request {
+  user?: any;
+}

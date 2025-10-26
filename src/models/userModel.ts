@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
 import validator from 'validator';
+import { logger } from '../logger.js';
 
 const userSchema = new mongoose.Schema(
   {
@@ -33,11 +34,22 @@ const userSchema = new mongoose.Schema(
         message: 'Passwords are not the same!',
       },
     },
+    passwordChangedAt: Date,
   },
+
   {
     methods: {
       async correctedPassword(candidatePassword: string, userPassword: string): Promise<boolean> {
         return await bcrypt.compare(candidatePassword, userPassword);
+      },
+
+      changedPasswordAfter(JWTTimestamp: number): boolean {
+        if (this.passwordChangedAt) {
+          const changedTimestamp = parseInt((this.passwordChangedAt.getTime() / 1000).toString(), 10);
+          logger.info(`${changedTimestamp}, JWTTimestamp:${JWTTimestamp}`);
+          return JWTTimestamp < changedTimestamp;
+        }
+        return false;
       },
     },
   }

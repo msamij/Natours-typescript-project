@@ -5,7 +5,7 @@ import User from '../models/userModel.js';
 import { AppError } from '../utils/appError.js';
 import { catchAsync } from '../utils/catchAsync.js';
 import { jwtVerifyPromisified } from '../utils/jwtVerifyPromisify.js';
-import { logger } from '../logger.js';
+import type { RequestWithUser } from '../types/Request.js';
 
 const signToken = (id: Types.ObjectId) => {
   return jwt.sign({ id }, process.env.JWT_SECRET as string, {
@@ -53,10 +53,10 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
   });
 });
 
-export const protect = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  let token;
+export const protect = catchAsync(async (req: RequestWithUser, _res: Response, next: NextFunction) => {
+  let token: string = '';
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    token = req.headers.authorization.split(' ')[1];
+    token = req.headers.authorization.split(' ')[1]!;
   }
 
   if (!token) {
@@ -65,10 +65,15 @@ export const protect = catchAsync(async (req: Request, res: Response, next: Next
 
   const decoded = await jwtVerifyPromisified(token, process.env.JWT_SECRET as string);
 
-  const freshUser = await User.findById(decoded.id);
-  if (!freshUser) {
+  const currentUser = await User.findById(decoded.id);
+  if (!currentUser) {
     return next(new AppError('The user belonging to this token does no longer exists', 401));
   }
 
+  if (currentUser.changedPasswordAfter(decoded.iat)) {
+    return next(new AppError('User recently changed password! Please log in again', 401));
+  }
+
+  req.user = currentUser;
   next();
 });
