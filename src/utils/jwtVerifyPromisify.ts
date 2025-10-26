@@ -1,5 +1,11 @@
 import jwt from 'jsonwebtoken';
 
+type JWTDecoded = {
+  id: string;
+  iat: number;
+  exp: number;
+};
+
 /**
  * Promise-based version of jwt.verify()
  *
@@ -9,13 +15,13 @@ import jwt from 'jsonwebtoken';
  * @param secret Secret key to verify the token.
  * @returns a decoded JWT token.
  */
-export const jwtVerifyPromisified = (token: string, secret: string) => {
+export const jwtVerifyPromisified = (token: string, secret: string): Promise<JWTDecoded> => {
   return new Promise((resolve, reject) => {
     jwt.verify(token, secret, {}, (err, payload) => {
       if (err) {
         reject(err);
       } else {
-        resolve(payload);
+        resolve(payload as JWTDecoded);
       }
     });
   });

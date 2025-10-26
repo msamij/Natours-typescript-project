@@ -64,6 +64,11 @@ export const protect = catchAsync(async (req: Request, res: Response, next: Next
   }
 
   const decoded = await jwtVerifyPromisified(token, process.env.JWT_SECRET as string);
-  logger.info(decoded);
+
+  const freshUser = await User.findById(decoded.id);
+  if (!freshUser) {
+    return next(new AppError('The user belonging to this token does no longer exists', 401));
+  }
+
   next();
 });
