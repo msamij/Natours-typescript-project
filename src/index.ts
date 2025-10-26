@@ -6,6 +6,7 @@ import tourRouter from './routes/tourRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import { type RequestWithTime } from './types/Request.js';
 import { AppError } from './utils/appError.js';
+import { logger } from './logger.js';
 
 const __dirname = path.resolve();
 
