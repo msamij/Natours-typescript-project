@@ -1,7 +1,7 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { AppError } from './appError.js';
 
-type ControllerFn<T extends Request = Request> = (req: T, res: Response, next: NextFunction) => Promise<void>;
+type CatchAsyncCallback<T extends Request = Request> = (req: T, res: Response, next: NextFunction) => Promise<void>;
 
 type AppErrorType = {
   [key: string]: any;
@@ -14,9 +14,9 @@ type AppErrorType = {
   cause?: unknown;
 };
 
-export const catchAsync = <T extends Request = Request>(fn: ControllerFn<T>) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    fn(req as T, res, next).catch(err => {
+export const catchAsync = <T extends Request = Request>(fn: CatchAsyncCallback<T>) => {
+  return (_req: Request, _res: Response, next: NextFunction) => {
+    fn(_req as T, _res, next).catch(err => {
       const error: AppErrorType = Object.assign(new AppError(err.message, 400), err);
       error.name = err.name;
       next(error);

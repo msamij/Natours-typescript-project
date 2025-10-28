@@ -11,5 +11,11 @@ export interface RequestWithYear extends Request {
 }
 
 export interface RequestWithUser extends Request {
-  user?: any;
+  user: {
+    name: string;
+    email: string;
+    password: string;
+    passwordConfirm: string;
+    role: string;
+  };
 }

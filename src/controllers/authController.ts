@@ -1,4 +1,4 @@
-import { type NextFunction, type Request, type Response } from 'express';
+import { type NextFunction, type Request, type RequestHandler, type Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { Types } from 'mongoose';
 import User from '../models/userModel.js';
@@ -21,6 +21,7 @@ export const signup = catchAsync(async (req: Request, res: Response, _next: Next
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
+    role: req.body?.role,
   });
 
   const token = signToken(newUser._id);
@@ -77,3 +78,15 @@ export const protect = catchAsync(async (req: RequestWithUser, _res: Response, n
   req.user = currentUser;
   next();
 });
+
+export const restrictTo = (...roles: string[]): RequestHandler => {
+  return (req: Request, _res: Response, next: NextFunction) => {
+    const request = req as RequestWithUser;
+
+    if (!roles.includes(request.user.role)) {
+      return next(new AppError('You do not have permission to perform this action', 403));
+    }
+
+    next();
+  };
+};
