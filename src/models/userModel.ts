@@ -83,6 +83,13 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
+userSchema.pre('save', function (next) {
+  if (!this.isModified('password') || this.isNew) return next();
+
+  this.passwordChangedAt = (Date.now() - 1000) as unknown as Date;
+  next();
+});
+
 const User = mongoose.model('User', userSchema);
 
 export default User;
