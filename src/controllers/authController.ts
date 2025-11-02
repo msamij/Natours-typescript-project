@@ -2,10 +2,10 @@ import { type NextFunction, type Request, type RequestHandler, type Response } f
 import jwt from 'jsonwebtoken';
 import { Types } from 'mongoose';
 import User from '../models/userModel.js';
+import type { RequestWithUser } from '../types/Request.js';
 import { AppError } from '../utils/appError.js';
 import { catchAsync } from '../utils/catchAsync.js';
 import { jwtVerifyPromisified } from '../utils/jwtVerifyPromisify.js';
-import type { RequestWithUser } from '../types/Request.js';
 
 const signToken = (id: Types.ObjectId) => {
   return jwt.sign({ id }, process.env.JWT_SECRET as string, {

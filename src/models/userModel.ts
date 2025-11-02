@@ -1,7 +1,6 @@
 import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
 import validator from 'validator';
-import { logger } from '../logger.js';
 
 const userSchema = new mongoose.Schema(
   {
@@ -51,7 +50,6 @@ const userSchema = new mongoose.Schema(
       changedPasswordAfter(JWTTimestamp: number): boolean {
         if (this.passwordChangedAt) {
           const changedTimestamp = parseInt((this.passwordChangedAt.getTime() / 1000).toString(), 10);
-          logger.info(`${changedTimestamp}, JWTTimestamp:${JWTTimestamp}`);
           return JWTTimestamp < changedTimestamp;
         }
         return false;
