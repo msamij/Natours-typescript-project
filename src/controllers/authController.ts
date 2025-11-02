@@ -132,4 +132,22 @@ export const resetPassword = catchAsync(async (req: RequestWithToken, res: Respo
   const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
 
   const user = await User.findOne({ passwordResetToken: hashedToken, passwordResetExpires: { $gt: Date.now() } });
+
+  if (!user) {
+    return next(new AppError('Token is invalid or has expired', 400));
+  }
+
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+
+  (user as mongoose.Document & { passwordResetToken: string | undefined }).passwordResetToken = undefined;
+  (user as mongoose.Document & { passwordResetExpires: Date | undefined }).passwordResetExpires = undefined;
+
+  await user.save();
+
+  const token = signToken(user._id);
+  res.status(200).json({
+    status: 'success',
+    token,
+  });
 });
