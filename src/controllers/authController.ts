@@ -1,8 +1,9 @@
+import crypto from 'crypto';
 import { type NextFunction, type Request, type RequestHandler, type Response } from 'express';
 import jwt from 'jsonwebtoken';
 import mongoose, { Types } from 'mongoose';
 import User from '../models/userModel.js';
-import type { RequestWithUser } from '../types/Types.js';
+import type { RequestWithToken, RequestWithUser } from '../types/Types.js';
 import { AppError } from '../utils/appError.js';
 import { catchAsync } from '../utils/catchAsync.js';
 import { sendEmail } from '../utils/email.js';
@@ -103,8 +104,8 @@ export const forgotPassword = catchAsync(async (req: Request, res: Response, nex
 
   const resetURL = `${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${resetToken}`;
 
-  const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}\n
-  If you didn't forget your password, please ignore this email!`;
+  const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: 
+  ${resetURL}\nIf you didn't forget your password, please ignore this email!`;
 
   try {
     await sendEmail({
@@ -119,8 +120,16 @@ export const forgotPassword = catchAsync(async (req: Request, res: Response, nex
     });
   } catch (err) {
     (user as mongoose.Document & { passwordResetToken: string | undefined }).passwordResetToken = undefined;
-    (user as mongoose.Document & { passwordResetExpires: number | undefined }).passwordResetExpires = undefined;
+    (user as mongoose.Document & { passwordResetExpires: Date | undefined }).passwordResetExpires = undefined;
+
+    await user.save({ validateBeforeSave: false });
+
+    return next(new AppError('There was an error sending the email. Try again later!', 500));
   }
 });
 
-export const resetPassword = (req: Request, res: Response, next: NextFunction) => {};
+export const resetPassword = catchAsync(async (req: RequestWithToken, res: Response, next: NextFunction) => {
+  const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
+
+  const user = await User.findOne({ passwordResetToken: hashedToken, passwordResetExpires: { $gt: Date.now() } });
+});

@@ -42,7 +42,7 @@ const userSchema = new mongoose.Schema(
     },
     passwordChangedAt: Date,
     passwordResetToken: String,
-    passwordResetExpires: Number,
+    passwordResetExpires: Date,
   },
 
   {
@@ -66,7 +66,7 @@ const userSchema = new mongoose.Schema(
 
         logger.info(`${resetToken}, ${this.passwordResetToken}`);
 
-        this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+        this.passwordResetExpires = (Date.now() + 10 * 60 * 1000) as unknown as Date;
 
         return resetToken;
       },

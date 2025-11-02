@@ -10,6 +10,12 @@ export interface RequestWithYear extends Request {
   };
 }
 
+export interface RequestWithToken extends Request {
+  params: {
+    token: string;
+  };
+}
+
 export interface RequestWithUser extends Request {
   user: {
     name: string;
