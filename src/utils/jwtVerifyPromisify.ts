@@ -1,10 +1,5 @@
 import jwt from 'jsonwebtoken';
-
-type JWTDecoded = {
-  id: string;
-  iat: number;
-  exp: number;
-};
+import type { JWTDecoded } from '../types/Types.js';
 
 /**
  * Promise-based version of jwt.verify()

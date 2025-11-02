@@ -84,6 +84,11 @@ const tourSchema = new mongoose.Schema(
   }
 );
 
+// Keeping this type in model, since we need typeof tourSchema, instead of throwing it into /types/Types.ts
+// Where we would have had to import typeof tourSchema and these type here in model. Rather to keep things simple, declaring it here :)
+type TourSchemaInferred = InferSchemaType<typeof tourSchema> & { start: number };
+type TourDocument = mongoose.Query<TourSchemaInferred, {}> & TourSchemaInferred;
+
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
@@ -93,16 +98,13 @@ tourSchema.pre('save', function (next) {
   next();
 });
 
-type TourSchemaType = InferSchemaType<typeof tourSchema> & { start: number };
-type TourDocument = mongoose.Query<TourSchemaType, {}> & TourSchemaType;
-
 tourSchema.pre<TourDocument>(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
   this.start = Date.now();
   next();
 });
 
-tourSchema.post<TourSchemaType>(/^find/, function (_, next) {
+tourSchema.post<TourSchemaInferred>(/^find/, function (_document, next) {
   logger.info(`Query took ${Date.now() - this.start} milliseconds!`);
   next();
 });

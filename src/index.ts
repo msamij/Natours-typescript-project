@@ -4,7 +4,7 @@ import path from 'path';
 import { errorHandler } from './controllers/errorController.js';
 import tourRouter from './routes/tourRoutes.js';
 import userRouter from './routes/userRoutes.js';
-import { type RequestWithTime } from './types/Request.js';
+import { type RequestWithTime } from './types/Types.js';
 import { AppError } from './utils/appError.js';
 
 const __dirname = path.resolve();

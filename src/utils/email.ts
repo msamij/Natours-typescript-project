@@ -12,6 +12,7 @@ const sendEmail = (options: any) => {
   });
 
   const mailOptions = {
-    from: '',
+    from: 'Muhammad Sami <msamiaj20@gmail.com>',
+    to: options.email,
   };
 };
