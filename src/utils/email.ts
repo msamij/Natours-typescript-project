@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
+import type { SendEmailOptions } from '../types/Types.js';
 
-const sendEmail = (options: any) => {
+export const sendEmail = async (options: SendEmailOptions) => {
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     // (port property defined as number | undefined), to make typescript happy I am aliasing it as a number.
@@ -14,5 +15,9 @@ const sendEmail = (options: any) => {
   const mailOptions = {
     from: 'Muhammad Sami <msamiaj20@gmail.com>',
     to: options.email,
+    subject: options.subject,
+    text: options.message,
   };
+
+  await transporter.sendMail(mailOptions);
 };

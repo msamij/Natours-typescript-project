@@ -40,3 +40,10 @@ export type JWTDecoded = {
   iat: number;
   exp: number;
 };
+
+export type SendEmailOptions = {
+  email: string;
+  subject: string;
+  message: string;
+  html: string;
+};
