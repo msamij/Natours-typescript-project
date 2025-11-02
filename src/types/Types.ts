@@ -45,5 +45,5 @@ export type SendEmailOptions = {
   email: string;
   subject: string;
   message: string;
-  html: string;
+  html?: string;
 };

@@ -1,4 +1,4 @@
-import mongoose, { type InferSchemaType } from 'mongoose';
+import mongoose from 'mongoose';
 import slugify from '../imports/slugify.js';
 import { logger } from '../logger.js';
 
@@ -86,8 +86,8 @@ const tourSchema = new mongoose.Schema(
 
 // Keeping this type in model, since we need typeof tourSchema, instead of throwing it into /types/Types.ts
 // Where we would have had to import typeof tourSchema and these type here in model. Rather to keep things simple, declaring it here :)
-type TourSchemaInferred = InferSchemaType<typeof tourSchema> & { start: number };
-type TourDocument = mongoose.Query<TourSchemaInferred, {}> & TourSchemaInferred;
+type TourSchemaInferred = mongoose.InferSchemaType<typeof tourSchema> & { start: number };
+type TourDocument = mongoose.Query<{}, {}> & TourSchemaInferred;
 
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
