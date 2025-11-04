@@ -18,6 +18,7 @@ export interface RequestWithToken extends Request {
 
 export interface RequestWithUser extends Request {
   user: {
+    id?: string;
     name: string;
     email: string;
     password: string;
