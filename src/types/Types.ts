@@ -20,10 +20,10 @@ export interface RequestWithUser extends Request {
   user: {
     id?: string;
     name: string;
+    role: string;
     email: string;
     password: string;
     passwordConfirm: string;
-    role: string;
   };
 }
 

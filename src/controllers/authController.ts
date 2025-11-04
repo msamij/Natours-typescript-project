@@ -17,6 +17,17 @@ const signToken = (id: Types.ObjectId) => {
   });
 };
 
+const createSendToken = (user: any, statusCode: number, res: Response) => {
+  const token = signToken(user.id);
+  res.status(statusCode).json({
+    status: 'success',
+    token,
+    data: {
+      user,
+    },
+  });
+};
+
 export const signup = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
   const newUser = await User.create({
     name: req.body.name,
@@ -26,14 +37,7 @@ export const signup = catchAsync(async (req: Request, res: Response, _next: Next
     role: req.body?.role,
   });
 
-  const token = signToken(newUser._id);
-  res.status(201).json({
-    status: 'success',
-    token,
-    data: {
-      user: newUser,
-    },
-  });
+  createSendToken(newUser, 201, res);
 });
 
 export const login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -49,11 +53,7 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
     return next(new AppError('Incorrect email or password', 401));
   }
 
-  const token = signToken(user._id);
-  res.status(200).json({
-    status: 'success',
-    token,
-  });
+  createSendToken(user, 200, res);
 });
 
 export const protect = catchAsync(async (req: RequestWithUser, _res: Response, next: NextFunction) => {
@@ -153,7 +153,14 @@ export const resetPassword = catchAsync(async (req: RequestWithToken, res: Respo
 });
 
 export const updatePassword = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
-  const { email, password } = req.body;
+  const user = await User.findById(req.user.id).select('+password');
 
-  const user = await User.findById(req.user.id);
+  if (!(await user?.correctedPassword(req.body.password, user.password))) {
+    return next(new AppError('Your current password is wrong.', 401));
+  }
+
+  user!.password = req.body.password;
+  user!.passwordConfirm = req.body.passwordConfirm;
+
+  await user?.save();
 });

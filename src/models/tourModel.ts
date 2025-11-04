@@ -84,8 +84,9 @@ const tourSchema = new mongoose.Schema(
   }
 );
 
-// Keeping this type in model, since we need typeof tourSchema, instead of throwing it into /types/Types.ts
-// Where we would have had to import typeof tourSchema and these type here in model. Rather to keep things simple, declaring it here :)
+// Keeping these types in model.ts because they depend on `typeof tourSchema`.
+// Moving them to Types.ts would require importing the schema there,
+// creating unnecessary coupling. To keep things simple, we define them here.
 type TourSchemaInferred = mongoose.InferSchemaType<typeof tourSchema> & { start: number };
 type TourDocument = mongoose.Query<{}, {}> & TourSchemaInferred;
 
