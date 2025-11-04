@@ -87,8 +87,12 @@ const tourSchema = new mongoose.Schema(
 // Keeping these types in model.ts because they depend on `typeof tourSchema`.
 // Moving them to Types.ts would require importing the schema there,
 // creating unnecessary coupling. To keep things simple, we define them here.
+
+// The shape of a Tour document based on the schema
 type TourSchemaInferred = mongoose.InferSchemaType<typeof tourSchema> & { start: number };
-type TourDocument = mongoose.Query<{}, {}> & TourSchemaInferred;
+
+// The query context used inside pre/post('find') hooks
+type TourQueryContext = mongoose.Query<any, any> & TourSchemaInferred;
 
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
@@ -99,13 +103,13 @@ tourSchema.pre('save', function (next) {
   next();
 });
 
-tourSchema.pre<TourDocument>(/^find/, function (next) {
+tourSchema.pre<TourQueryContext>(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
   this.start = Date.now();
   next();
 });
 
-tourSchema.post<TourSchemaInferred>(/^find/, function (_document, next) {
+tourSchema.post<TourQueryContext>(/^find/, function (_document, next) {
   logger.info(`Query took ${Date.now() - this.start} milliseconds!`);
   next();
 });
