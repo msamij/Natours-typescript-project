@@ -151,3 +151,5 @@ export const resetPassword = catchAsync(async (req: RequestWithToken, res: Respo
     token,
   });
 });
+
+export const updatePassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {});
