@@ -75,7 +75,7 @@ userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 12);
 
-  (this as mongoose.Document & { passwordConfirm?: string | undefined }).passwordConfirm = undefined;
+  this.passwordConfirm = undefined as unknown as string;
 
   next();
 });

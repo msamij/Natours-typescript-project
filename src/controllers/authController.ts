@@ -119,8 +119,8 @@ export const forgotPassword = catchAsync(async (req: Request, res: Response, nex
       message: 'Token sent to email!',
     });
   } catch (err) {
-    (user as mongoose.Document & { passwordResetToken: string | undefined }).passwordResetToken = undefined;
-    (user as mongoose.Document & { passwordResetExpires: Date | undefined }).passwordResetExpires = undefined;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
 
     await user.save({ validateBeforeSave: false });
 
@@ -140,8 +140,8 @@ export const resetPassword = catchAsync(async (req: RequestWithToken, res: Respo
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
 
-  (user as mongoose.Document & { passwordResetToken: string | undefined }).passwordResetToken = undefined;
-  (user as mongoose.Document & { passwordResetExpires: Date | undefined }).passwordResetExpires = undefined;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
 
   await user.save();
 
