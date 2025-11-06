@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import { type NextFunction, type Request, type RequestHandler, type Response } from 'express';
 import jwt from 'jsonwebtoken';
-import mongoose, { Types } from 'mongoose';
+import { Types } from 'mongoose';
 import User from '../models/userModel.js';
 import type { RequestWithToken, RequestWithUser } from '../types/Types.js';
 import { AppError } from '../utils/appError.js';
@@ -143,13 +143,7 @@ export const resetPassword = catchAsync(async (req: RequestWithToken, res: Respo
   user.passwordResetToken = undefined;
   user.passwordResetExpires = undefined;
 
-  await user.save();
-
-  const token = signToken(user._id);
-  res.status(200).json({
-    status: 'success',
-    token,
-  });
+  createSendToken(user, 200, res);
 });
 
 export const updatePassword = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
