@@ -1,8 +1,9 @@
-import { type Request, type Response } from 'express';
+import { type NextFunction, type Request, type Response } from 'express';
 import User from '../models/userModel.js';
 import { catchAsync } from '../utils/catchAsync.js';
+import { AppError } from '../utils/appError.js';
 
-export const getAllUsers = catchAsync(async (req: Request, res: Response) => {
+export const getAllUsers = catchAsync(async (_req: Request, res: Response) => {
   const users = await User.find();
 
   res.status(200).json({
@@ -11,6 +12,16 @@ export const getAllUsers = catchAsync(async (req: Request, res: Response) => {
     data: {
       users,
     },
+  });
+});
+
+export const updateMe = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  if (req.body.password || req.body.passwordConfirm) {
+    return next(new AppError('This route is not for password updates. Please use /updateMyPassword', 400));
+  }
+
+  res.status(200).json({
+    status: 'success',
   });
 });
 
