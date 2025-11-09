@@ -76,6 +76,9 @@ const userSchema = new mongoose.Schema(
   }
 );
 
+type UserSchemaInferred = mongoose.InferSchemaType<typeof userSchema>;
+type UserQueryContext = mongoose.Query<any, any, UserSchemaInferred>;
+
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 12);
@@ -89,6 +92,11 @@ userSchema.pre('save', function (next) {
   if (!this.isModified('password') || this.isNew) return next();
 
   this.passwordChangedAt = (Date.now() - 1000) as unknown as Date;
+  next();
+});
+
+userSchema.pre<UserQueryContext>(/^find/, function (next) {
+  this.find({ active: true });
   next();
 });
 
