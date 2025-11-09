@@ -1,9 +1,8 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import User from '../models/userModel.js';
-import { catchAsync } from '../utils/catchAsync.js';
-import { AppError } from '../utils/appError.js';
 import type { RequestWithUser } from '../types/Types.js';
-import { logger } from '../logger.js';
+import { AppError } from '../utils/appError.js';
+import { catchAsync } from '../utils/catchAsync.js';
 
 const filterObj = (obj: any, ...allowedFields: string[]) => {
   const newObj: any = {};
