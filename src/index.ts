@@ -1,4 +1,5 @@
 import express, { type Express } from 'express';
+import rateLimit from 'express-rate-limit';
 import morgan from 'morgan';
 import path from 'path';
 import { errorHandler } from './controllers/errorController.js';
@@ -11,10 +12,17 @@ const __dirname = path.resolve();
 
 const app: Express = express();
 
+const limiter = rateLimit({
+  limit: 100,
+  windowMs: 60 * 60 * 1000,
+  message: 'Too many requests from this IP, please try again in an hour!',
+});
+
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
+app.use('/api', limiter);
 app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
 
