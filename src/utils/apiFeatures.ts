@@ -5,7 +5,7 @@ export class APIFeatures<T> {
   constructor(public query: Query<T[], T>, public queryString: ParsedQs) {}
 
   filter() {
-    const queryObj = { ...qs.parse(this.queryString as any) };
+    const queryObj = { ...qs.parse(this.queryString as unknown as string) };
 
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
     excludedFields.forEach(el => delete queryObj[el]);
