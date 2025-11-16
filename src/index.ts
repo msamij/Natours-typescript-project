@@ -7,10 +7,17 @@ import tourRouter from './routes/tourRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import { type RequestWithTime } from './types/Types.js';
 import { AppError } from './utils/appError.js';
+import helmet from 'helmet';
 
 const __dirname = path.resolve();
 
 const app: Express = express();
+
+app.use(helmet());
+
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
 
 const limiter = rateLimit({
   limit: 100,
@@ -18,12 +25,8 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again in an hour!',
 });
 
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
-}
-
 app.use('/api', limiter);
-app.use(express.json());
+app.use(express.json({ limit: '10kb' }));
 app.use(express.static(`${__dirname}/public`));
 
 app.use((req: RequestWithTime, _res, next) => {
