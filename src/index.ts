@@ -1,5 +1,7 @@
 import express, { type Express } from 'express';
+import mongoSanitize from 'express-mongo-sanitize';
 import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
 import morgan from 'morgan';
 import path from 'path';
 import { errorHandler } from './controllers/errorController.js';
@@ -7,7 +9,6 @@ import tourRouter from './routes/tourRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import { type RequestWithTime } from './types/Types.js';
 import { AppError } from './utils/appError.js';
-import helmet from 'helmet';
 
 const __dirname = path.resolve();
 
@@ -26,7 +27,11 @@ const limiter = rateLimit({
 });
 
 app.use('/api', limiter);
+
 app.use(express.json({ limit: '10kb' }));
+
+app.use(mongoSanitize());
+
 app.use(express.static(`${__dirname}/public`));
 
 app.use((req: RequestWithTime, _res, next) => {
