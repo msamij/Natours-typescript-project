@@ -2,6 +2,7 @@ import express, { type Express } from 'express';
 import mongoSanitize from 'express-mongo-sanitize';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
+import hpp from 'hpp';
 import morgan from 'morgan';
 import path from 'path';
 import { errorHandler } from './controllers/errorController.js';
@@ -31,6 +32,12 @@ app.use('/api', limiter);
 app.use(express.json({ limit: '10kb' }));
 
 app.use(mongoSanitize());
+
+app.use(
+  hpp({
+    whitelist: ['duration', 'ratingsQuantity', 'ratingsAverage', 'maxGroupSize', 'difficulty', 'price'],
+  })
+);
 
 app.use(express.static(`${__dirname}/public`));
 
