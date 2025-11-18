@@ -1,5 +1,4 @@
 import express, { type Express } from 'express';
-import mongoSanitize from 'express-mongo-sanitize';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import hpp from 'hpp';
@@ -30,8 +29,6 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 app.use(express.json({ limit: '10kb' }));
-
-app.use(mongoSanitize());
 
 app.use(
   hpp({
