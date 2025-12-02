@@ -149,13 +149,18 @@ tourSchema.pre<TourQueryContext>(/^find/, function (next) {
   next();
 });
 
-tourSchema.post<TourQueryContext>(/^find/, function (_document, next) {
-  logger.info(`Query took ${Date.now() - this.start} milliseconds!`);
+tourSchema.pre<TourQueryContext>(/^find/, function (next) {
+  this.populate({ path: 'guides', select: '-__v -passwordChangedAt' });
   next();
 });
 
 tourSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+  next();
+});
+
+tourSchema.post<TourQueryContext>(/^find/, function (_document, next) {
+  logger.info(`Query took ${Date.now() - this.start} milliseconds!`);
   next();
 });
 
