@@ -6,9 +6,9 @@ import hpp from 'hpp';
 import morgan from 'morgan';
 import path from 'path';
 import { errorHandler } from './controllers/errorController.js';
+import reviewRouter from './routes/reviewRoutes.js';
 import tourRouter from './routes/tourRoutes.js';
 import userRouter from './routes/userRoutes.js';
-import reviewRouter from './routes/reviewRoutes.js';
 import { type RequestWithTime } from './types/Types.js';
 import { AppError } from './utils/appError.js';
 
