@@ -1,3 +1,4 @@
+import cors from 'cors';
 import express, { type Express } from 'express';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
@@ -13,6 +14,9 @@ import { AppError } from './utils/appError.js';
 const __dirname = path.resolve();
 
 const app: Express = express();
+
+app.use(cors());
+app.options('{/*splat}', cors());
 
 app.use(helmet());
 
