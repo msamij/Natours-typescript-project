@@ -8,6 +8,7 @@ import path from 'path';
 import { errorHandler } from './controllers/errorController.js';
 import tourRouter from './routes/tourRoutes.js';
 import userRouter from './routes/userRoutes.js';
+import reviewRouter from './routes/reviewRoutes.js';
 import { type RequestWithTime } from './types/Types.js';
 import { AppError } from './utils/appError.js';
 
@@ -49,6 +50,7 @@ app.use((req: RequestWithTime, _res, next) => {
 
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/reviews', reviewRouter);
 
 app.all('{/*splat}', (req, _res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

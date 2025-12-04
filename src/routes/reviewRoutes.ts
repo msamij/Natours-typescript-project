@@ -1,6 +1,8 @@
-import express from 'express';
+import express, { Router } from 'express';
 import * as reviewController from '../controllers/reviewController.js';
 
-const router = express.Router();
+const router: Router = express.Router();
 
-router.route('/').get();
+router.route('/').get;
+
+export default router;
