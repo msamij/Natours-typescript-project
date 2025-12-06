@@ -1,3 +1,4 @@
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express, { type Express } from 'express';
 import rateLimit from 'express-rate-limit';
@@ -11,7 +12,6 @@ import tourRouter from './routes/tourRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import { type RequestWithTime } from './types/Types.js';
 import { AppError } from './utils/appError.js';
-import cookieParser from 'cookie-parser';
 
 const __dirname = path.resolve();
 

@@ -36,6 +36,14 @@ const reviewSchema = new mongoose.Schema(
   }
 );
 
+type ReviewSchemaInferred = mongoose.InferSchemaType<typeof reviewSchema>;
+type ReviewDocument = mongoose.HydratedDocument<ReviewSchemaInferred>;
+type ReviewQueryContext = mongoose.Query<any, ReviewDocument, {}>;
+
+reviewSchema.pre<ReviewQueryContext>(/^find/, function (next) {
+  this.populate({ path: 'tour', select: 'name' }).populate({ path: 'user', select: 'name photo' });
+  next();
+});
 const Review = mongoose.model('Review', reviewSchema);
 
 export default Review;
