@@ -76,8 +76,15 @@ const userSchema = new mongoose.Schema(
   }
 );
 
+interface UserMethods {
+  correctedPassword(candidatePassword: string, userPassword: string): Promise<boolean>;
+  changedPasswordAfter(JWTTimestamp: number): boolean;
+  createPasswordResetToken(): string;
+}
+
 type UserSchemaInferred = mongoose.InferSchemaType<typeof userSchema>;
-type UserQueryContext = mongoose.Query<any, any, UserSchemaInferred>;
+type UserDocument = mongoose.HydratedDocument<UserSchemaInferred, UserMethods>;
+type UserQueryContext = mongoose.Query<any, UserDocument, {}>;
 
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
