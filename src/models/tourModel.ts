@@ -120,8 +120,12 @@ const tourSchema = new mongoose.Schema(
 // The shape of a Tour document based on the schema
 type TourSchemaInferred = mongoose.InferSchemaType<typeof tourSchema> & { start: number };
 
-// The query context used inside pre/post('find') hooks
-type TourQueryContext = mongoose.Query<any, any> & TourSchemaInferred;
+// A Fully functional typed mongoose Hyderated document based on TourSchemaInferred.
+type TourDocument = mongoose.HydratedDocument<TourSchemaInferred>;
+
+// The query context used inside pre/post('find') hooks.
+// (Since we need start field inside pre(/^find/) hooks, we essentially need a larger type containing TourDocument!)
+type TourQueryContext = mongoose.Query<any, TourDocument, {}> & TourDocument;
 
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
