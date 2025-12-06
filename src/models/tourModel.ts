@@ -131,6 +131,8 @@ tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
 
+tourSchema.virtual('reviews', { ref: 'Review', foreignField: 'tour', localField: '_id' });
+
 /**
  *  (Commenting this one out), implementing referencing approach instead of embeding users in Tour Documents.
  */
