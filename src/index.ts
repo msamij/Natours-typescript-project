@@ -11,13 +11,21 @@ import tourRouter from './routes/tourRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import { type RequestWithTime } from './types/Types.js';
 import { AppError } from './utils/appError.js';
+import cookieParser from 'cookie-parser';
 
 const __dirname = path.resolve();
 
 const app: Express = express();
 
-app.use(cors());
-app.options('{/*splat}', cors());
+app.use(cookieParser());
+
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  })
+);
+app.options('{/*splat}', cors({ origin: 'http://localhost:3000', credentials: true }));
 
 app.use(helmet());
 

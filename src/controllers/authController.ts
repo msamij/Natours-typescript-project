@@ -72,7 +72,6 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
 export const protect = catchAsync(async (req: RequestWithUser, _res: Response, next: NextFunction) => {
   let token: string = '';
 
-  // CHECK FOR TOKEN IN COOKIE (New Logic for Frontend Compatibility)
   if (req.cookies && req.cookies.jwt) {
     token = req.cookies.jwt;
   } else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
