@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import Review from '../models/reviewModel.js';
+import type { RequestWithUser } from '../types/Types.js';
 import { catchAsync } from '../utils/catchAsync.js';
 
 export const getAllReviews = catchAsync(async (_req: Request, res: Response, _next: NextFunction) => {
@@ -14,7 +15,9 @@ export const getAllReviews = catchAsync(async (_req: Request, res: Response, _ne
   });
 });
 
-export const createReview = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+export const createReview = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+  if (!req.body.tour) req.body.tour = req.params.tourId;
+  if (!req.body.user) req.body.user = req.user.id;
   const newReview = await Review.create(req.body);
 
   res.status(201).json({
