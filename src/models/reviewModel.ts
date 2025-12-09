@@ -41,7 +41,8 @@ type ReviewDocument = mongoose.HydratedDocument<ReviewSchemaInferred>;
 type ReviewQueryContext = mongoose.Query<any, ReviewDocument, {}>;
 
 reviewSchema.pre<ReviewQueryContext>(/^find/, function (next) {
-  this.populate({ path: 'tour', select: 'name' }).populate({ path: 'user', select: 'name photo' });
+  this.populate({ path: 'user', select: 'name photo' });
+  // .populate({ path: 'tour', select: 'name' })
   next();
 });
 const Review = mongoose.model('Review', reviewSchema);
