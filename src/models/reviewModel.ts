@@ -45,6 +45,7 @@ reviewSchema.pre<ReviewQueryContext>(/^find/, function (next) {
   // .populate({ path: 'tour', select: 'name' })
   next();
 });
+
 const Review = mongoose.model('Review', reviewSchema);
 
 export default Review;
