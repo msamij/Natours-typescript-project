@@ -4,6 +4,7 @@ import type { RequestWithYear } from '../types/Types.js';
 import { APIFeatures } from '../utils/apiFeatures.js';
 import { AppError } from '../utils/appError.js';
 import { catchAsync } from '../utils/catchAsync.js';
+import * as factory from './handlerFactory.js';
 
 export const aliasTopTour = async (req: Request, _res: Response, next: NextFunction) => {
   const url = new URL(req.originalUrl, `http://${req.headers.host}`);
@@ -71,18 +72,21 @@ export const updateTour = catchAsync(async (req: Request, res: Response, next: N
   });
 });
 
-export const deleteTour = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const tour = await Tour.findByIdAndDelete(req.params.id);
+export const deleteTour = factory.deleteOne(Tour);
 
-  if (!tour) {
-    return next(new AppError(`No tour found with the ID: ${req.params.id}`, 404));
-  }
+// Commenting this out since we're doing generic deleteOne implementation.
+// export const deleteTour = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+//   const tour = await Tour.findByIdAndDelete(req.params.id);
 
-  res.status(204).json({
-    status: 'success',
-    data: null,
-  });
-});
+//   if (!tour) {
+//     return next(new AppError(`No tour found with the ID: ${req.params.id}`, 404));
+//   }
+
+//   res.status(204).json({
+//     status: 'success',
+//     data: null,
+//   });
+// });
 
 export const getTourStats = catchAsync(async (_req: Request, res: Response) => {
   const stats = await Tour.aggregate([
