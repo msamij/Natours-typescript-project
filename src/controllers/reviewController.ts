@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from 'express';
 import Review from '../models/reviewModel.js';
 import type { RequestWithUser } from '../types/Types.js';
 import { catchAsync } from '../utils/catchAsync.js';
+import * as factory from './handlerFactory.js';
 
 export const getAllReviews = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
   let filter = {};
@@ -30,3 +31,5 @@ export const createReview = catchAsync(async (req: RequestWithUser, res: Respons
     review: newReview,
   });
 });
+
+export const deleteReview = factory.deleteOne(Review);
