@@ -1,9 +1,11 @@
 import express, { Router } from 'express';
 import * as authController from '../controllers/authController.js';
 import * as tourController from '../controllers/tourController.js';
-import * as reviewController from '../controllers/reviewController.js';
+import reviewRouter from '../routes/reviewRoutes.js';
 
 const router: Router = express.Router();
+
+router.use('/:tourId/reviews', reviewRouter);
 
 router.route('/top-5-cheap').get(tourController.aliasTopTour, tourController.getAllTours);
 
@@ -18,8 +20,9 @@ router
   .patch(tourController.updateTour)
   .delete(authController.protect, authController.restrictTo('admin', 'lead-guide'), tourController.deleteTour);
 
-router
-  .route('/:tourId/reviews')
-  .post(authController.protect, authController.restrictTo('user'), reviewController.createReview);
+// Commenting this out since we're implementing merge param.
+// router
+//   .route('/:tourId/reviews')
+//   .post(authController.protect, authController.restrictTo('user'), reviewController.createReview);
 
 export default router;
