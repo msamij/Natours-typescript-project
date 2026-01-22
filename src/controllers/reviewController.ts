@@ -3,8 +3,13 @@ import Review from '../models/reviewModel.js';
 import type { RequestWithUser } from '../types/Types.js';
 import { catchAsync } from '../utils/catchAsync.js';
 
-export const getAllReviews = catchAsync(async (_req: Request, res: Response, _next: NextFunction) => {
-  const reviews = await Review.find();
+export const getAllReviews = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
+  let filter = {};
+  if (req.params.tourId) {
+    filter = { tour: req.params.tourId };
+  }
+
+  const reviews = await Review.find(filter);
 
   res.status(200).json({
     status: 'success',
