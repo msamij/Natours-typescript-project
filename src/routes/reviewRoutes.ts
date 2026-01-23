@@ -7,5 +7,6 @@ const router: Router = express.Router({
 });
 
 router.route('/').get(reviewController.getAllReviews).post(protect, restrictTo('user'), reviewController.createReview);
+router.route('/:id').delete(reviewController.deleteReview);
 
 export default router;
