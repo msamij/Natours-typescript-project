@@ -17,3 +17,20 @@ export const deleteOne = <T>(Model: mongoose.Model<T>) => {
     });
   });
 };
+
+export const updateOne = <T>(Model: mongoose.Model<T>) => {
+  return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const doc = await Model.findById(req.params.id).populate('reviews');
+
+    if (!doc) {
+      return next(new AppError(`No document found with the ID: ${req.params.id}`, 404));
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        doc,
+      },
+    });
+  });
+};
