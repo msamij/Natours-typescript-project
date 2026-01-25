@@ -160,6 +160,8 @@ export const resetPassword = catchAsync(async (req: RequestWithToken, res: Respo
   user.passwordResetToken = undefined;
   user.passwordResetExpires = undefined;
 
+  await user.save();
+
   createSendToken(user, 200, res);
 });
 
