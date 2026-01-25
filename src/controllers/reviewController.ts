@@ -29,14 +29,7 @@ export const setTourUserIds = (req: Request, _res: Response, next: NextFunction)
   next();
 };
 
-export const createReview = catchAsync(async (req: RequestWithUser, res: Response, _next: NextFunction) => {
-  const newReview = await Review.create(req.body);
-
-  res.status(201).json({
-    status: 'success',
-    review: newReview,
-  });
-});
+export const createReview = factory.createOne(Review);
 
 export const deleteReview = factory.deleteOne(Review);
 
