@@ -32,7 +32,7 @@ export const updateOne = <T>(Model: mongoose.Model<T>) => {
     res.status(200).json({
       status: 'success',
       data: {
-        tour: doc,
+        data: doc,
       },
     });
   });
