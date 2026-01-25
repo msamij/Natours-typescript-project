@@ -54,23 +54,26 @@ export const createTour = catchAsync(async (req: Request, res: Response, _next: 
   });
 });
 
-export const updateTour = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
+// Commenting this out since we're doing generic updateOne implementation.
+// export const updateTour = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+//   const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+//     new: true,
+//     runValidators: true,
+//   });
 
-  if (!tour) {
-    return next(new AppError(`No tour found with the ID: ${req.params.id}`, 404));
-  }
+//   if (!tour) {
+//     return next(new AppError(`No tour found with the ID: ${req.params.id}`, 404));
+//   }
 
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour,
-    },
-  });
-});
+//   res.status(200).json({
+//     status: 'success',
+//     data: {
+//       tour,
+//     },
+//   });
+// });
+
+export const updateTour = factory.updateOne(Tour);
 
 export const deleteTour = factory.deleteOne(Tour);
 
