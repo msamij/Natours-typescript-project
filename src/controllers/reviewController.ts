@@ -21,9 +21,11 @@ export const getAllReviews = catchAsync(async (req: Request, res: Response, _nex
   });
 });
 
-export const setTourUserIds = (req: RequestWithUser, res: Response, next: NextFunction) => {
-  if (!req.body.tour) req.body.tour = req.params.tourId;
-  if (!req.body.user) req.body.user = req.user.id;
+export const setTourUserIds = (req: Request, _res: Response, next: NextFunction) => {
+  const request = req as RequestWithUser;
+
+  if (!request.body.tour) request.body.tour = request.params.tourId;
+  if (!request.body.user) request.body.user = request.user.id;
   next();
 };
 
