@@ -43,16 +43,17 @@ export const getTour = catchAsync(async (req: Request, res: Response, next: Next
   });
 });
 
-export const createTour = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
-  const newTour = await Tour.create(req.body);
+// Commenting this out since we're doing generic createOne implementation.
+// export const createTour = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
+//   const newTour = await Tour.create(req.body);
 
-  res.status(201).json({
-    status: 'sucess',
-    data: {
-      tour: newTour,
-    },
-  });
-});
+//   res.status(201).json({
+//     status: 'sucess',
+//     data: {
+//       tour: newTour,
+//     },
+//   });
+// });
 
 // Commenting this out since we're doing generic updateOne implementation.
 // export const updateTour = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -72,6 +73,8 @@ export const createTour = catchAsync(async (req: Request, res: Response, _next: 
 //     },
 //   });
 // });
+
+export const createTour = factory.createOne(Tour);
 
 export const updateTour = factory.updateOne(Tour);
 
