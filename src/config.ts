@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import path from 'path';
 
-const ENV_PATH = path.resolve('./src/config.env');
+const ENV_PATH = path.resolve('./src/.env');
 dotenv.config({ path: ENV_PATH });
 
 export function getEnvVar(name: string): string {
