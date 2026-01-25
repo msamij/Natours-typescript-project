@@ -37,3 +37,16 @@ export const updateOne = <T>(Model: mongoose.Model<T>) => {
     });
   });
 };
+
+export const createOne = <T>(Model: mongoose.Model<T>) => {
+  return catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
+    const doc = await Model.create(req.body);
+
+    res.status(201).json({
+      status: 'sucess',
+      data: {
+        data: doc,
+      },
+    });
+  });
+};
