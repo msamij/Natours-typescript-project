@@ -58,7 +58,7 @@ export const getUser = factory.getOne(User);
 export const createUser = (req: Request, res: Response) => {
   res.status(500).json({
     status: 'error',
-    message: 'This route is not yet defined!',
+    message: 'This route is not yet defined! Please use /signup instead.',
   });
 };
 
