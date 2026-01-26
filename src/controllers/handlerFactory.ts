@@ -51,7 +51,7 @@ export const createOne = <T>(Model: mongoose.Model<T>) => {
   });
 };
 
-export const getOne = <T>(Model: mongoose.Model<T>, popOptions?: string | string[]) => {
+export const getOne = <T>(Model: mongoose.Model<T>, popOptions?: mongoose.PopulateOptions) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     let query = Model.findById(req.params.id);
     if (popOptions) {
