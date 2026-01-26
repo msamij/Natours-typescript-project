@@ -28,20 +28,21 @@ export const getAllTours = catchAsync(async (req: Request, res: Response, _next:
   });
 });
 
-export const getTour = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const tour = await Tour.findById(req.params.id).populate('reviews');
+// Commenting this out since we're doing generic getOne implementation.
+// export const getTour = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+//   const tour = await Tour.findById(req.params.id).populate('reviews');
 
-  if (!tour) {
-    return next(new AppError(`No tour found with the ID: ${req.params.id}`, 404));
-  }
+//   if (!tour) {
+//     return next(new AppError(`No tour found with the ID: ${req.params.id}`, 404));
+//   }
 
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour,
-    },
-  });
-});
+//   res.status(200).json({
+//     status: 'success',
+//     data: {
+//       tour,
+//     },
+//   });
+// });
 
 // Commenting this out since we're doing generic createOne implementation.
 // export const createTour = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
@@ -75,6 +76,8 @@ export const getTour = catchAsync(async (req: Request, res: Response, next: Next
 // });
 
 export const createTour = factory.createOne(Tour);
+
+export const getTour = factory.getOne(Tour, { path: 'reviews' });
 
 export const updateTour = factory.updateOne(Tour);
 
