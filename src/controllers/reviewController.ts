@@ -31,6 +31,8 @@ export const setTourUserIds = (req: Request, _res: Response, next: NextFunction)
 
 export const createReview = factory.createOne(Review);
 
+export const getReview = factory.getOne(Review);
+
 export const deleteReview = factory.deleteOne(Review);
 
 export const updateReview = factory.updateOne(Review);
