@@ -50,3 +50,24 @@ export const createOne = <T>(Model: mongoose.Model<T>) => {
     });
   });
 };
+
+export const getOne = <T>(Model: mongoose.Model<T>, popOptions: string | string[]) => {
+  return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    let query = Model.findById(req.params.id);
+    if (popOptions) {
+      query = query.populate(popOptions);
+    }
+    const doc = await query;
+
+    if (!doc) {
+      return next(new AppError(`No document found with the ID: ${req.params.id}`, 404));
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        data: doc,
+      },
+    });
+  });
+};
