@@ -14,87 +14,15 @@ export const aliasTopTour = async (req: Request, _res: Response, next: NextFunct
   next();
 };
 
-export const getAllTours = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
-  const features = new APIFeatures(Tour.find(), req.query).filter().sort().limitFields().paginate();
-  const tours = await features.query;
-
-  res.status(200).json({
-    status: 'success',
-    results: tours.length,
-    data: {
-      tours,
-    },
-  });
-});
-
-// Commenting this out since we're doing generic getOne implementation.
-// export const getTour = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-//   const tour = await Tour.findById(req.params.id).populate('reviews');
-
-//   if (!tour) {
-//     return next(new AppError(`No tour found with the ID: ${req.params.id}`, 404));
-//   }
-
-//   res.status(200).json({
-//     status: 'success',
-//     data: {
-//       tour,
-//     },
-//   });
-// });
-
-// Commenting this out since we're doing generic createOne implementation.
-// export const createTour = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
-//   const newTour = await Tour.create(req.body);
-
-//   res.status(201).json({
-//     status: 'sucess',
-//     data: {
-//       tour: newTour,
-//     },
-//   });
-// });
-
-// Commenting this out since we're doing generic updateOne implementation.
-// export const updateTour = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-//   const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-//     new: true,
-//     runValidators: true,
-//   });
-
-//   if (!tour) {
-//     return next(new AppError(`No tour found with the ID: ${req.params.id}`, 404));
-//   }
-
-//   res.status(200).json({
-//     status: 'success',
-//     data: {
-//       tour,
-//     },
-//   });
-// });
-
 export const createTour = factory.createOne(Tour);
+
+export const getAllTours = factory.getAll(Tour);
 
 export const getTour = factory.getOne(Tour, { path: 'reviews' });
 
 export const updateTour = factory.updateOne(Tour);
 
 export const deleteTour = factory.deleteOne(Tour);
-
-// Commenting this out since we're doing generic deleteOne implementation.
-// export const deleteTour = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-//   const tour = await Tour.findByIdAndDelete(req.params.id);
-
-//   if (!tour) {
-//     return next(new AppError(`No tour found with the ID: ${req.params.id}`, 404));
-//   }
-
-//   res.status(204).json({
-//     status: 'success',
-//     data: null,
-//   });
-// });
 
 export const getTourStats = catchAsync(async (_req: Request, res: Response) => {
   const stats = await Tour.aggregate([
@@ -168,3 +96,78 @@ export const getMonthlyPlan = catchAsync(async (req: RequestWithYear, res: Respo
     },
   });
 });
+
+// Commenting this out since we're doing generic getOne implementation.
+// export const getAllTours = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
+//   const features = new APIFeatures(Tour.find(), req.query).filter().sort().limitFields().paginate();
+//   const tours = await features.query;
+
+//   res.status(200).json({
+//     status: 'success',
+//     results: tours.length,
+//     data: {
+//       tours,
+//     },
+//   });
+// });
+
+// Commenting this out since we're doing generic getOne implementation.
+// export const getTour = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+//   const tour = await Tour.findById(req.params.id).populate('reviews');
+
+//   if (!tour) {
+//     return next(new AppError(`No tour found with the ID: ${req.params.id}`, 404));
+//   }
+
+//   res.status(200).json({
+//     status: 'success',
+//     data: {
+//       tour,
+//     },
+//   });
+// });
+
+// Commenting this out since we're doing generic createOne implementation.
+// export const createTour = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
+//   const newTour = await Tour.create(req.body);
+
+//   res.status(201).json({
+//     status: 'sucess',
+//     data: {
+//       tour: newTour,
+//     },
+//   });
+// });
+
+// Commenting this out since we're doing generic updateOne implementation.
+// export const updateTour = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+//   const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+//     new: true,
+//     runValidators: true,
+//   });
+
+//   if (!tour) {
+//     return next(new AppError(`No tour found with the ID: ${req.params.id}`, 404));
+//   }
+
+//   res.status(200).json({
+//     status: 'success',
+//     data: {
+//       tour,
+//     },
+//   });
+// });
+
+// Commenting this out since we're doing generic deleteOne implementation.
+// export const deleteTour = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+//   const tour = await Tour.findByIdAndDelete(req.params.id);
+
+//   if (!tour) {
+//     return next(new AppError(`No tour found with the ID: ${req.params.id}`, 404));
+//   }
+
+//   res.status(204).json({
+//     status: 'success',
+//     data: null,
+//   });
+// });
