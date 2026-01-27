@@ -2,7 +2,6 @@ import { type NextFunction, type Request, type Response } from 'express';
 import Tour from '../models/tourModel.js';
 import type { RequestWithYear } from '../types/Types.js';
 import { APIFeatures } from '../utils/apiFeatures.js';
-import { AppError } from '../utils/appError.js';
 import { catchAsync } from '../utils/catchAsync.js';
 import * as factory from './handlerFactory.js';
 
