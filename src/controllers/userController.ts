@@ -16,6 +16,11 @@ const filterObj = (obj: any, ...allowedFields: string[]) => {
   return newObj;
 };
 
+export const getMe = (req: RequestWithUser, _res: Response, next: NextFunction) => {
+  req.params.id = req.user.id as string;
+  next();
+};
+
 export const updateMe = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
   if (req.body.password || req.body.passwordConfirm) {
     return next(new AppError('This route is not for password updates. Please use /updateMyPassword', 400));
