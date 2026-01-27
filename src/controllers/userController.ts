@@ -1,9 +1,9 @@
 import { type NextFunction, type Request, type Response } from 'express';
+import * as factory from '../controllers/handlerFactory.js';
 import User from '../models/userModel.js';
 import type { RequestWithUser } from '../types/Types.js';
 import { AppError } from '../utils/appError.js';
 import { catchAsync } from '../utils/catchAsync.js';
-import * as factory from '../controllers/handlerFactory.js';
 
 const filterObj = (obj: any, ...allowedFields: string[]) => {
   const newObj: any = {};
@@ -53,14 +53,14 @@ export const deleteMe = catchAsync(async (req: RequestWithUser, res: Response, n
   });
 });
 
-export const getUser = factory.getOne(User);
-
-export const createUser = (req: Request, res: Response) => {
+export const createUser = (_req: Request, res: Response) => {
   res.status(500).json({
     status: 'error',
-    message: 'This route is not yet defined! Please use /signup instead.',
+    message: 'This route is not defined! Please use /signup instead.',
   });
 };
+
+export const getUser = factory.getOne(User);
 
 export const updateUser = factory.updateOne(User);
 
