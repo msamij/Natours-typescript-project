@@ -16,18 +16,6 @@ const filterObj = (obj: any, ...allowedFields: string[]) => {
   return newObj;
 };
 
-export const getAllUsers = catchAsync(async (_req: Request, res: Response) => {
-  const users = await User.find();
-
-  res.status(200).json({
-    status: 'success',
-    results: users.length,
-    data: {
-      users,
-    },
-  });
-});
-
 export const updateMe = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
   if (req.body.password || req.body.passwordConfirm) {
     return next(new AppError('This route is not for password updates. Please use /updateMyPassword', 400));
@@ -59,6 +47,8 @@ export const createUser = (_req: Request, res: Response) => {
     message: 'This route is not defined! Please use /signup instead.',
   });
 };
+
+export const getAllUsers = factory.getAll(User);
 
 export const getUser = factory.getOne(User);
 
