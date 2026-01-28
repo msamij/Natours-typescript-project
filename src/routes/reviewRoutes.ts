@@ -6,10 +6,12 @@ const router: Router = express.Router({
   mergeParams: true,
 });
 
+router.use(protect);
+
 router
   .route('/')
   .get(reviewController.getAllReviews)
-  .post(protect, restrictTo('user'), reviewController.setTourUserIds, reviewController.createReview);
+  .post(restrictTo('user'), reviewController.setTourUserIds, reviewController.createReview);
 
 router
   .route('/:id')
