@@ -16,8 +16,9 @@ const filterObj = (obj: any, ...allowedFields: string[]) => {
   return newObj;
 };
 
-export const getMe = (req: RequestWithUser, _res: Response, next: NextFunction) => {
-  req.params.id = req.user.id as string;
+export const getMe = (req: Request, _res: Response, next: NextFunction) => {
+  const requestWithUser = req as RequestWithUser;
+  req.params.id = requestWithUser.user.id as string;
   next();
 };
 
@@ -38,7 +39,7 @@ export const updateMe = catchAsync(async (req: RequestWithUser, res: Response, n
   });
 });
 
-export const deleteMe = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+export const deleteMe = catchAsync(async (req: RequestWithUser, res: Response, _next: NextFunction) => {
   await User.findByIdAndUpdate(req.user.id, { active: false });
   res.status(204).json({
     status: 'success',
