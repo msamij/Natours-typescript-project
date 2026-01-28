@@ -20,7 +20,7 @@ router
 router
   .route('/:id')
   .get(tourController.getTour)
-  .patch(tourController.updateTour)
+  .patch(authController.protect, authController.restrictTo('admin', 'lead-guide'), tourController.updateTour)
   .delete(authController.protect, authController.restrictTo('admin', 'lead-guide'), tourController.deleteTour);
 
 // Commenting this out since we're implementing merge param.
