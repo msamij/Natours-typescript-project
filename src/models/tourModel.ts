@@ -110,8 +110,10 @@ const tourSchema = new mongoose.Schema(
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
+  },
 );
+
+tourSchema.index({ price: 1, ratingsAverage: -1 });
 
 // Keeping these types in model.ts because they depend on `typeof tourSchema`.
 // Moving them to Types.ts would require importing the schema there,
