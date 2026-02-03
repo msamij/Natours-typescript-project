@@ -11,7 +11,7 @@ import User from '../models/userModel.js';
 const DB = getEnvVar('DATABASE').replace('<PASSWORD>', getEnvVar('DATABASE_PASSWORD'));
 
 mongoose.connect(DB).then(() => {
-  logger.info('DB connection succesfull');
+  logger.info('DB connection successfull');
 });
 
 const __dirname = path.resolve();
