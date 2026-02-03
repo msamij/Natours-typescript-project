@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import Tour from './tourModel.js';
 
 const reviewSchema = new mongoose.Schema(
   {
@@ -46,6 +47,8 @@ const reviewSchema = new mongoose.Schema(
             },
           },
         ]);
+
+        await Tour.findByIdAndUpdate(tourId, { ratingsQuantity: stats[0].nRating, ratingsAverage: stats[0].avgRating });
       },
     },
 
@@ -62,9 +65,8 @@ type ReviewSchemaInferred = mongoose.InferSchemaType<typeof reviewSchema>;
 type ReviewDocument = mongoose.HydratedDocument<ReviewSchemaInferred, ReviewMethods>;
 type ReviewQueryContext = mongoose.Query<any, ReviewDocument, {}>;
 
-reviewSchema.pre('save', function (next) {
+reviewSchema.post('save', function () {
   (this.constructor as unknown as ReviewDocument).calculateAverageRatings(this.tour);
-  next();
 });
 
 reviewSchema.pre<ReviewQueryContext>(/^find/, function (next) {
