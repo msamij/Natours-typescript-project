@@ -33,7 +33,7 @@ const reviewSchema = new mongoose.Schema(
 
   {
     statics: {
-      async calculateAverageRatings(tourId: mongoose.Schema.Types.ObjectId) {
+      async calculateAverageRatings(tourId: mongoose.Types.ObjectId) {
         const stats = await this.aggregate([
           {
             $match: { tour: tourId },
@@ -54,9 +54,18 @@ const reviewSchema = new mongoose.Schema(
   },
 );
 
+interface ReviewMethods {
+  calculateAverageRatings(tourId: mongoose.Types.ObjectId): Promise<void>;
+}
+
 type ReviewSchemaInferred = mongoose.InferSchemaType<typeof reviewSchema>;
-type ReviewDocument = mongoose.HydratedDocument<ReviewSchemaInferred>;
+type ReviewDocument = mongoose.HydratedDocument<ReviewSchemaInferred, ReviewMethods>;
 type ReviewQueryContext = mongoose.Query<any, ReviewDocument, {}>;
+
+reviewSchema.pre('save', function (next) {
+  (this.constructor as unknown as ReviewDocument).calculateAverageRatings(this.tour);
+  next();
+});
 
 reviewSchema.pre<ReviewQueryContext>(/^find/, function (next) {
   this.populate({ path: 'user', select: 'name photo' });
