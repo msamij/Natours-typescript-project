@@ -30,10 +30,28 @@ const reviewSchema = new mongoose.Schema(
       required: [true, 'Review must belong to a user.'],
     },
   },
+
   {
+    statics: {
+      async calculateAverageRatings(tourId: mongoose.Schema.Types.ObjectId) {
+        const stats = await this.aggregate([
+          {
+            $match: { tour: tourId },
+          },
+          {
+            $group: {
+              _id: '$tour',
+              nRating: { $sum: 1 },
+              avgRating: { $avg: '$rating' },
+            },
+          },
+        ]);
+      },
+    },
+
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
+  },
 );
 
 type ReviewSchemaInferred = mongoose.InferSchemaType<typeof reviewSchema>;
