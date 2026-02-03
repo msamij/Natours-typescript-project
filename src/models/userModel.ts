@@ -73,7 +73,7 @@ const userSchema = new mongoose.Schema(
         return resetToken;
       },
     },
-  }
+  },
 );
 
 interface UserMethods {
@@ -86,6 +86,8 @@ type UserSchemaInferred = mongoose.InferSchemaType<typeof userSchema>;
 type UserDocument = mongoose.HydratedDocument<UserSchemaInferred, UserMethods>;
 type UserQueryContext = mongoose.Query<any, UserDocument, {}>;
 
+// Turning off password encryption step since we're importing user data in which passwords are already encrypted.
+/*
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 12);
@@ -101,6 +103,7 @@ userSchema.pre('save', function (next) {
   this.passwordChangedAt = (Date.now() - 1000) as unknown as Date;
   next();
 });
+*/
 
 userSchema.pre<UserQueryContext>(/^find/, function (next) {
   this.find({ active: { $ne: false } });
