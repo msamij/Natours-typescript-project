@@ -23,7 +23,7 @@ const reviews = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/reviews.j
 const importData = async () => {
   try {
     await Tour.create(tours);
-    await User.create(users);
+    await User.create(users, { validateBeforeSave: false });
     await Review.create(reviews);
     logger.info('Data imported successfully!');
   } catch (err) {
