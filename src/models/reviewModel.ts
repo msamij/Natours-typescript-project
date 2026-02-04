@@ -63,16 +63,25 @@ interface ReviewMethods {
 
 type ReviewSchemaInferred = mongoose.InferSchemaType<typeof reviewSchema>;
 type ReviewDocument = mongoose.HydratedDocument<ReviewSchemaInferred, ReviewMethods>;
-type ReviewQueryContext = mongoose.Query<any, ReviewDocument, {}>;
-
-reviewSchema.post('save', function () {
-  (this.constructor as unknown as ReviewDocument).calculateAverageRatings(this.tour);
-});
+type ReviewQueryContext = mongoose.Query<any, ReviewDocument, {}> & { review: ReviewDocument };
 
 reviewSchema.pre<ReviewQueryContext>(/^find/, function (next) {
   this.populate({ path: 'user', select: 'name photo' });
   // .populate({ path: 'tour', select: 'name' })
   next();
+});
+
+reviewSchema.pre<ReviewQueryContext>(/^findOneAnd/, async function (next) {
+  this.review = (await this.findOne()) as ReviewDocument;
+  next();
+});
+
+reviewSchema.post<ReviewQueryContext>(/^findOneAnd/, async function () {
+  await (this.review.constructor as unknown as ReviewDocument).calculateAverageRatings(this.review.tour);
+});
+
+reviewSchema.post('save', function () {
+  (this.constructor as unknown as ReviewDocument).calculateAverageRatings(this.tour);
 });
 
 const Review = mongoose.model('Review', reviewSchema);
