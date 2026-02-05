@@ -57,12 +57,8 @@ const reviewSchema = new mongoose.Schema(
   },
 );
 
-interface ReviewMethods {
-  calculateAverageRatings(tourId: mongoose.Types.ObjectId): Promise<void>;
-}
-
 type ReviewSchemaInferred = mongoose.InferSchemaType<typeof reviewSchema>;
-type ReviewDocument = mongoose.HydratedDocument<ReviewSchemaInferred, ReviewMethods>;
+type ReviewDocument = mongoose.HydratedDocument<ReviewSchemaInferred>;
 type ReviewQueryContext = mongoose.Query<any, ReviewDocument, {}>;
 
 reviewSchema.pre<ReviewQueryContext>(/^find/, function (next) {
@@ -72,12 +68,12 @@ reviewSchema.pre<ReviewQueryContext>(/^find/, function (next) {
 });
 
 reviewSchema.post('save', function () {
-  (this.constructor as unknown as ReviewDocument).calculateAverageRatings(this.tour);
+  (this.constructor as any).calculateAverageRatings(this.tour);
 });
 
 reviewSchema.post(/^findOneAnd/, async function (doc) {
   if (doc) {
-    await (doc.constructor as any as ReviewDocument).calculateAverageRatings(doc.tour);
+    await (doc.constructor as any).calculateAverageRatings(doc.tour);
   }
 });
 
