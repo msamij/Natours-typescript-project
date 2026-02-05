@@ -65,6 +65,8 @@ type ReviewSchemaInferred = mongoose.InferSchemaType<typeof reviewSchema>;
 type ReviewDocument = mongoose.HydratedDocument<ReviewSchemaInferred>;
 type ReviewQueryContext = mongoose.Query<any, ReviewDocument, {}>;
 
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
+
 reviewSchema.pre<ReviewQueryContext>(/^find/, function (next) {
   this.populate({ path: 'user', select: 'name photo' });
   // .populate({ path: 'tour', select: 'name' })
