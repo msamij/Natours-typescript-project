@@ -48,7 +48,11 @@ const reviewSchema = new mongoose.Schema(
           },
         ]);
 
-        await Tour.findByIdAndUpdate(tourId, { ratingsQuantity: stats[0].nRating, ratingsAverage: stats[0].avgRating });
+        if (stats.length > 0) {
+          await Tour.findByIdAndUpdate(tourId, { ratingsQuantity: stats[0].nRating, ratingsAverage: stats[0].avgRating });
+        } else {
+          await Tour.findByIdAndUpdate(tourId, { ratingsQuantity: 0, ratingsAverage: 0 });
+        }
       },
     },
 
