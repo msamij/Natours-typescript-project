@@ -16,6 +16,14 @@ export interface RequestWithToken extends Request {
   };
 }
 
+export interface RequestWithGeoCoordinates extends Request {
+  params: {
+    distance: string;
+    latlng: string;
+    unit: string;
+  };
+}
+
 export interface RequestWithUser extends Request {
   user: {
     id?: string;
