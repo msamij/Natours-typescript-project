@@ -96,6 +96,8 @@ export const getMonthlyPlan = catchAsync(async (req: RequestWithYear, res: Respo
   });
 });
 
+export const getToursWithin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {});
+
 // Commenting this out since we're doing generic getOne implementation.
 // export const getAllTours = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
 //   const features = new APIFeatures(Tour.find(), req.query).filter().sort().limitFields().paginate();
