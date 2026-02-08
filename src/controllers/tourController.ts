@@ -135,6 +135,13 @@ export const getDistances = catchAsync(async (req: RequestWithGeoCoordinates, re
           coordinates: [lng, lat],
         },
         distanceField: 'distance',
+        distanceMultiplier: 0.001,
+      },
+    },
+    {
+      $project: {
+        distance: 1,
+        name: 1,
       },
     },
   ]);
