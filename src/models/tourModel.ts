@@ -132,6 +132,13 @@ type TourDocument = mongoose.HydratedDocument<TourSchemaInferred>;
 // (Since we need start field inside pre(/^find/) hooks, we essentially need a larger type containing TourDocument!)
 type TourQueryContext = mongoose.Query<any, TourDocument, {}> & TourDocument;
 
+// Pipeline stage is an array of objects defining each stage.
+type tourPipelineStage = [
+  {
+    [key: string]: any;
+  },
+];
+
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
@@ -166,7 +173,13 @@ tourSchema.pre<TourQueryContext>(/^find/, function (next) {
 });
 
 tourSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+  const pipelineStages = this.pipeline() as unknown as tourPipelineStage;
+
+  // We perform this check to ensure if aggregation pipeline does not have $geoNear as that should be the first stage in pipeline.
+  if (!pipelineStages[0]['$geoNear']) {
+    this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+  }
+
   next();
 });
 

@@ -119,6 +119,35 @@ export const getToursWithin = catchAsync(async (req: RequestWithGeoCoordinates, 
   });
 });
 
+export const getDistances = catchAsync(async (req: RequestWithGeoCoordinates, res: Response, next: NextFunction) => {
+  const { latlng, unit } = req.params;
+  const [lat, lng] = latlng.split(',').map(el => Number(el));
+
+  if (!lat || !lng) {
+    return next(new AppError(`Please provide lattitude and longitude in the format lat,lng`, 400));
+  }
+
+  const distances = await Tour.aggregate([
+    {
+      $geoNear: {
+        near: {
+          type: 'Point',
+          coordinates: [lng, lat],
+        },
+        distanceField: 'distance',
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    status: 'success',
+    results: distances.length,
+    data: {
+      data: distances,
+    },
+  });
+});
+
 // Commenting this out since we're doing generic getOne implementation.
 // export const getAllTours = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
 //   const features = new APIFeatures(Tour.find(), req.query).filter().sort().limitFields().paginate();
