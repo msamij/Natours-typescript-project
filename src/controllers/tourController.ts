@@ -123,6 +123,8 @@ export const getDistances = catchAsync(async (req: RequestWithGeoCoordinates, re
   const { latlng, unit } = req.params;
   const [lat, lng] = latlng.split(',').map(el => Number(el));
 
+  const multiplier = unit === 'mi' ? 0.000621371 : 0.001;
+
   if (!lat || !lng) {
     return next(new AppError(`Please provide lattitude and longitude in the format lat,lng`, 400));
   }
@@ -135,7 +137,7 @@ export const getDistances = catchAsync(async (req: RequestWithGeoCoordinates, re
           coordinates: [lng, lat],
         },
         distanceField: 'distance',
-        distanceMultiplier: 0.001,
+        distanceMultiplier: multiplier,
       },
     },
     {
