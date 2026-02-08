@@ -1,6 +1,7 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import Tour from '../models/tourModel.js';
-import type { RequestWithYear } from '../types/Types.js';
+import type { RequestWithGeoCoordinates, RequestWithYear } from '../types/Types.js';
+import { AppError } from '../utils/appError.js';
 import { catchAsync } from '../utils/catchAsync.js';
 import * as factory from './handlerFactory.js';
 
@@ -96,7 +97,27 @@ export const getMonthlyPlan = catchAsync(async (req: RequestWithYear, res: Respo
   });
 });
 
-export const getToursWithin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {});
+export const getToursWithin = catchAsync(async (req: RequestWithGeoCoordinates, res: Response, next: NextFunction) => {
+  const { distance, latlng, unit } = req.params;
+  const distanceNum = Number(distance);
+  const [lat, lng] = latlng.split(',');
+
+  if (!lat || !lng) {
+    return next(new AppError(`Please provide lattitude and longitude in the format lat,lng`, 400));
+  }
+
+  const radius = unit === 'mi' ? distanceNum / 3963.2 : distanceNum / 6378.1;
+
+  const tours = await Tour.find({ startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } } });
+
+  res.status(200).json({
+    status: 'success',
+    results: tours.length,
+    data: {
+      data: tours,
+    },
+  });
+});
 
 // Commenting this out since we're doing generic getOne implementation.
 // export const getAllTours = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
