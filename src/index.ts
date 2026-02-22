@@ -20,6 +20,8 @@ const app: Express = express();
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'src', 'views'));
 
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(cookieParser());
 
 app.use(
@@ -51,8 +53,6 @@ app.use(
     whitelist: ['duration', 'ratingsQuantity', 'ratingsAverage', 'maxGroupSize', 'difficulty', 'price'],
   }),
 );
-
-app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req: RequestWithTime, _res, next) => {
   req.requestTime = new Date().toISOString();
