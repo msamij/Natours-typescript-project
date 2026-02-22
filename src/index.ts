@@ -1,6 +1,6 @@
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import express, { type Express } from 'express';
+import express, { type Express, type Request, type Response } from 'express';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import hpp from 'hpp';
@@ -57,6 +57,10 @@ app.use(
 app.use((req: RequestWithTime, _res, next) => {
   req.requestTime = new Date().toISOString();
   next();
+});
+
+app.get('/', (req: Request, res: Response) => {
+  res.status(200).render('base');
 });
 
 app.use('/api/v1/tours', tourRouter);
