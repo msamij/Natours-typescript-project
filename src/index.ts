@@ -60,7 +60,7 @@ app.use((req: RequestWithTime, _res, next) => {
 });
 
 app.get('/', (req: Request, res: Response) => {
-  res.status(200).render('base');
+  res.status(200).render('base', { tour: 'The Forest Hiker', user: 'Muhammad Sami' });
 });
 
 app.use('/api/v1/tours', tourRouter);
