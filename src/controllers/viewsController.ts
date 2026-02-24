@@ -8,5 +8,6 @@ export const getOverview = catchAsync(async (_req: Request, res: Response, _next
 });
 
 export const getTour = (_req: Request, res: Response) => {
+  const tour = await Tour.findOne();
   res.status(200).render('tour', { title: 'The Forest Hiker' });
 };

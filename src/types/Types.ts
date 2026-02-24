@@ -4,6 +4,12 @@ export interface RequestWithTime extends Request {
   requestTime?: string;
 }
 
+export interface RequestWithSlug extends Request {
+  params: {
+    slug: string;
+  };
+}
+
 export interface RequestWithYear extends Request {
   params: {
     year: string;
