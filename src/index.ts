@@ -10,6 +10,7 @@ import { errorHandler } from './controllers/errorController.js';
 import reviewRouter from './routes/reviewRoutes.js';
 import tourRouter from './routes/tourRoutes.js';
 import userRouter from './routes/userRoutes.js';
+import viewRouter from './routes/viewRoutes.js';
 import { type RequestWithTime } from './types/Types.js';
 import { AppError } from './utils/appError.js';
 
@@ -59,18 +60,7 @@ app.use((req: RequestWithTime, _res, next) => {
   next();
 });
 
-app.get('/', (_req: Request, res: Response) => {
-  res.status(200).render('base', { tour: 'The Forest Hiker', user: 'Muhammad Sami' });
-});
-
-app.get('/overview', (_req: Request, res: Response) => {
-  res.status(200).render('overview', { title: 'All Tours' });
-});
-
-app.get('/tour', (_req: Request, res: Response) => {
-  res.status(200).render('tour', { title: 'The Forest Hiker' });
-});
-
+app.use('/', viewRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
