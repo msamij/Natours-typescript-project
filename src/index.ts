@@ -59,8 +59,16 @@ app.use((req: RequestWithTime, _res, next) => {
   next();
 });
 
-app.get('/', (req: Request, res: Response) => {
+app.get('/', (_req: Request, res: Response) => {
   res.status(200).render('base', { tour: 'The Forest Hiker', user: 'Muhammad Sami' });
+});
+
+app.get('/overview', (_req: Request, res: Response) => {
+  res.status(200).render('overview', { title: 'All Tours' });
+});
+
+app.get('/tour', (_req: Request, res: Response) => {
+  res.status(200).render('tour', { title: 'The Forest Hiker' });
 });
 
 app.use('/api/v1/tours', tourRouter);
