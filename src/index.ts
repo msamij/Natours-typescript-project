@@ -33,7 +33,17 @@ app.use(
 );
 app.options('{/*splat}', cors({ origin: 'http://localhost:3000', credentials: true }));
 
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", 'https://cdn.jsdelivr.net'],
+        connectSrc: ["'self'", 'https://cdn.jsdelivr.net'],
+      },
+    },
+  }),
+);
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
