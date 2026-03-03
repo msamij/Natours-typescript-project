@@ -112,7 +112,7 @@ export const isLoggedIn = catchAsync(async (req: RequestWithUser, res: Response,
     }
 
     res.locals.user = currentUser;
-    next();
+    return next();
   }
   next();
 });
