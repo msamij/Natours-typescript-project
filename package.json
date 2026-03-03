@@ -7,7 +7,9 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
-    "dev": "tsc --noEmit && node --watch --import tsx src/server.ts"
+    "dev": "tsc --noEmit && node --watch --import tsx src/server.ts",
+    "build:js": "esbuild public/js/index.js --bundle --minify --sourcemap --outfile=public/js/bundle.js",
+    "watch:js": "esbuild public/js/index.js --bundle --outfile=public/js/bundle.js --watch"
   },
   "keywords": [],
   "author": "Muhammad Sami",
