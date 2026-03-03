@@ -19,16 +19,16 @@ const signToken = (id: Types.ObjectId) => {
 
 const createSendToken = (user: any, statusCode: number, res: Response) => {
   const token = signToken(user.id);
-  // const JWT_COOKIE_EXPIRES_IN = process.env.JWT_COOKIE_EXPIRES_IN as unknown as number;
-  // const cookieOptions = {
-  //   expires: new Date(Date.now() + JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
-  //   httpOnly: true,
-  //   secure: false,
-  // };
+  const JWT_COOKIE_EXPIRES_IN = process.env.JWT_COOKIE_EXPIRES_IN as unknown as number;
+  const cookieOptions = {
+    expires: new Date(Date.now() + JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
+    httpOnly: true,
+    secure: false,
+  };
 
-  // if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
 
-  // res.cookie('jwt', token, cookieOptions);
+  res.cookie('jwt', token, cookieOptions);
 
   user.password = undefined;
   user.passwordConfirm = undefined;
