@@ -39,6 +39,7 @@ const sendErrorDev = (err: AppError, req: Request, res: Response) => {
   } else {
     res.status(err.statusCode).render('error', {
       title: 'Something went wrong!',
+      msg: err.message,
     });
   }
 };
