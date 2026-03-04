@@ -1,4 +1,4 @@
-import express, { type Response } from 'express';
+import express, { type Request, type Response } from 'express';
 import { logger } from '../logger.js';
 import { AppError } from '../utils/appError.js';
 
@@ -28,16 +28,22 @@ const handleJWTError = () => new AppError('Invalid token. Please login again!', 
 
 const handleJWTExpiredError = () => new AppError('Your token has expired! Please login again.', 401);
 
-const sendErrorDev = (err: AppError, res: Response) => {
-  res.status(err.statusCode).json({
-    status: err.status,
-    error: err,
-    message: err.message,
-    stack: err.stack,
-  });
+const sendErrorDev = (err: AppError, req: Request, res: Response) => {
+  if (req.originalUrl.startsWith('/api')) {
+    res.status(err.statusCode).json({
+      status: err.status,
+      error: err,
+      message: err.message,
+      stack: err.stack,
+    });
+  } else {
+    res.status(err.statusCode).render('error', {
+      title: 'Something went wrong!',
+    });
+  }
 };
 
-const sendErrorProd = (err: AppError, res: Response) => {
+const sendErrorProd = (err: AppError, req: Request, res: Response) => {
   if (err.isOperational) {
     res.status(err.statusCode).json({
       status: err.status,
@@ -53,12 +59,12 @@ const sendErrorProd = (err: AppError, res: Response) => {
   }
 };
 
-export const errorHandler: express.ErrorRequestHandler = (err: AppError, _req, res, _next) => {
+export const errorHandler: express.ErrorRequestHandler = (err: AppError, req, res, _next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'Error';
 
   if (process.env.NODE_ENV === 'development') {
-    sendErrorDev(err, res);
+    sendErrorDev(err, req, res);
   } else if (process.env.NODE_ENV === 'production') {
     let errCopy: AppError = { ...err };
 
@@ -85,6 +91,6 @@ export const errorHandler: express.ErrorRequestHandler = (err: AppError, _req, r
     if (errCopy.name === 'TokenExpiredError') {
       errCopy = handleJWTExpiredError();
     }
-    sendErrorProd(errCopy, res);
+    sendErrorProd(errCopy, req, res);
   }
 };
