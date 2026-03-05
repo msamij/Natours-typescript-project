@@ -39,3 +39,7 @@ export const getAccount = (req: Request, res: Response) => {
     title: 'Your account',
   });
 };
+
+export const updateUserData = (req: Request, res: Response, next: NextFunction) => {
+  console.log(req.body);
+};

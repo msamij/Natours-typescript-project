@@ -23,6 +23,13 @@ app.set('views', path.join(__dirname, 'src', 'views'));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(
+  express.urlencoded({
+    extended: true,
+    limit: '10kb',
+  }),
+);
+
 app.use(cookieParser());
 
 app.use(
