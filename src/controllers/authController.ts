@@ -78,7 +78,7 @@ export const logout = (_req: Request, res: Response) => {
   res.status(200).json({ status: 'success' });
 };
 
-export const protect = catchAsync(async (req: RequestWithUser, _res: Response, next: NextFunction) => {
+export const protect = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
   let token: string = '';
 
   if (req.cookies && req.cookies.jwt) {
@@ -103,6 +103,8 @@ export const protect = catchAsync(async (req: RequestWithUser, _res: Response, n
   }
 
   req.user = currentUser;
+  res.locals.user = currentUser;
+
   next();
 });
 
