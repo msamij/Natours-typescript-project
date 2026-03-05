@@ -29,35 +29,54 @@ const handleJWTError = () => new AppError('Invalid token. Please login again!', 
 const handleJWTExpiredError = () => new AppError('Your token has expired! Please login again.', 401);
 
 const sendErrorDev = (err: AppError, req: Request, res: Response) => {
+  // Sending development Error for api.
   if (req.originalUrl.startsWith('/api')) {
-    res.status(err.statusCode).json({
+    return res.status(err.statusCode).json({
       status: err.status,
       error: err,
       message: err.message,
       stack: err.stack,
     });
-  } else {
-    res.status(err.statusCode).render('error', {
-      title: 'Something went wrong!',
-      msg: err.message,
-    });
   }
+
+  // Sending development Error for rendered website.
+  logger.error(`ERROR 💥 ${err}`);
+  return res.status(err.statusCode).render('error', {
+    title: 'Something went wrong!',
+    msg: err.message,
+  });
 };
 
 const sendErrorProd = (err: AppError, req: Request, res: Response) => {
-  if (err.isOperational) {
-    res.status(err.statusCode).json({
-      status: err.status,
-      message: err.message,
-    });
-  } else {
-    logger.error(`ERROR 💥 ${err}`);
+  // Sending production Error for api.
+  if (req.originalUrl.startsWith('/api')) {
+    if (err.isOperational) {
+      return res.status(err.statusCode).json({
+        status: err.status,
+        message: err.message,
+      });
+    }
 
-    res.status(500).json({
+    logger.error(`ERROR 💥 ${err}`);
+    return res.status(500).json({
       status: 'error',
       message: 'Something went very wrong!',
     });
   }
+
+  // Sending production Error for rendered website.
+  if (err.isOperational) {
+    return res.status(err.statusCode).render('error', {
+      title: 'Something went wrong!',
+      msg: err.message,
+    });
+  }
+
+  logger.error(`ERROR 💥 ${err}`);
+  return res.status(err.statusCode).render('error', {
+    title: 'Something went wrong!',
+    msg: 'Please try again later.',
+  });
 };
 
 export const errorHandler: express.ErrorRequestHandler = (err: AppError, req, res, _next) => {
