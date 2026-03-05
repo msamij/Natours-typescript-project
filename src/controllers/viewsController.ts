@@ -1,8 +1,9 @@
 import type { NextFunction, Request, Response } from 'express';
 import Tour from '../models/tourModel.js';
-import type { RequestWithSlug } from '../types/Types.js';
+import type { RequestWithSlug, RequestWithUser } from '../types/Types.js';
 import { catchAsync } from '../utils/catchAsync.js';
 import { AppError } from '../utils/appError.js';
+import User from '../models/userModel.js';
 
 export const getOverview = catchAsync(async (_req: Request, res: Response, _next: NextFunction) => {
   const tours = await Tour.find();
@@ -40,6 +41,6 @@ export const getAccount = (req: Request, res: Response) => {
   });
 };
 
-export const updateUserData = (req: Request, res: Response, next: NextFunction) => {
-  console.log(req.body);
-};
+export const updateUserData = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+  const user = await User.findByIdAndUpdate(req.user.id);
+});
