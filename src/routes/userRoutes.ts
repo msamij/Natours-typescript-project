@@ -1,4 +1,5 @@
 import express, { Router } from 'express';
+import multer from 'multer';
 import * as authController from '../controllers/authController.js';
 import * as userController from '../controllers/userController.js';
 
