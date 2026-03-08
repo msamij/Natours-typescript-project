@@ -1,11 +1,14 @@
 import { type NextFunction, type Request, type RequestHandler, type Response } from 'express';
 import multer from 'multer';
+import sharp from 'sharp';
 import * as factory from '../controllers/handlerFactory.js';
 import User from '../models/userModel.js';
 import type { RequestWithUser } from '../types/Types.js';
 import { AppError } from '../utils/appError.js';
 import { catchAsync } from '../utils/catchAsync.js';
 
+// Commented this one out, we're saving images to a buffer!
+/*
 const multerStorage = multer.diskStorage({
   destination: (_req, _file, cb) => {
     cb(null, 'public/img/users');
@@ -15,6 +18,9 @@ const multerStorage = multer.diskStorage({
     cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
   },
 });
+*/
+
+const multerStorage = multer.memoryStorage();
 
 interface FileFilterCallback {
   (error: Error): void;
@@ -32,6 +38,22 @@ const multerFilter = (_req: Request, file: Express.Multer.File, cb: FileFilterCa
 const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
 
 export const uploadUserPhoto: RequestHandler = upload.single('photo');
+
+export const resizeUserPhoto = (req: Request, _res: Response, next: NextFunction) => {
+  const requestWithUser = req as RequestWithUser;
+
+  if (!req.file) return next();
+
+  req.file.filename = `user-${requestWithUser.user.id}-${Date.now()}.jpeg`;
+
+  sharp(req.file.buffer)
+    .resize(500, 500)
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/users/${req.file.filename}`);
+
+  next();
+};
 
 const filterObj = (obj: any, ...allowedFields: string[]) => {
   const newObj: any = {};
