@@ -11,7 +11,7 @@ const multerStorage = multer.diskStorage({
     cb(null, 'public/img/users');
   },
   filename: (req: RequestWithUser, file, cb) => {
-    const ext = file.mimetype.split('/')[2];
+    const ext = file.mimetype.split('/')[1];
     cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
   },
 });
@@ -51,8 +51,6 @@ export const getMe = (req: Request, _res: Response, next: NextFunction) => {
 };
 
 export const updateMe = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
-  console.log(req.file);
-  console.log(req.body);
   if (req.body.password || req.body.passwordConfirm) {
     return next(new AppError('This route is not for password updates. Please use /updateMyPassword', 400));
   }
