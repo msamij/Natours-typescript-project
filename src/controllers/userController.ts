@@ -1,5 +1,5 @@
 import { type NextFunction, type Request, type RequestHandler, type Response } from 'express';
-import multer from 'multer';
+import multer, { type FileFilterCallback } from 'multer';
 import sharp from 'sharp';
 import * as factory from '../controllers/handlerFactory.js';
 import User from '../models/userModel.js';
@@ -22,16 +22,11 @@ const multerStorage = multer.diskStorage({
 
 const multerStorage = multer.memoryStorage();
 
-interface FileFilterCallback {
-  (error: Error): void;
-  (error: Error, acceptFile: boolean): void;
-}
-
 const multerFilter = (_req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
   if (file.mimetype.startsWith('image')) {
-    cb(null as unknown as Error, true);
+    cb(null, true);
   } else {
-    cb(new AppError('Not an image! Please upload only images.', 404), false);
+    cb(new AppError('Not an image! Please upload only images.', 404));
   }
 };
 
