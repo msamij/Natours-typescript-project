@@ -1,9 +1,61 @@
-import { type NextFunction, type Request, type Response } from 'express';
+import { type NextFunction, type Request, type RequestHandler, type Response } from 'express';
+import multer, { type FileFilterCallback } from 'multer';
+import sharp from 'sharp';
 import Tour from '../models/tourModel.js';
-import type { RequestWithGeoCoordinates, RequestWithYear } from '../types/Types.js';
+import type { RequestWithGeoCoordinates, RequestWithUser, RequestWithYear } from '../types/Types.js';
 import { AppError } from '../utils/appError.js';
 import { catchAsync } from '../utils/catchAsync.js';
 import * as factory from './handlerFactory.js';
+
+const multerStorage = multer.memoryStorage();
+
+const multerFilter = (_req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(new AppError('Not an image! Please upload only images.', 404));
+  }
+};
+
+const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
+
+export const uploadTourImages: RequestHandler = upload.fields([
+  { name: 'imageCover', maxCount: 1 },
+  { name: 'images', maxCount: 3 },
+]);
+
+export const resizeTourImages = catchAsync(async (req: RequestWithUser, _res: Response, next: NextFunction) => {
+  const files = req.files as unknown as { [fieldname: string]: Express.Multer.File[] };
+  if (!files?.imageCover || !files?.images) {
+    return next();
+  }
+
+  req.body.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
+
+  await sharp((files.imageCover[0] as Express.Multer.File).buffer)
+    .resize(2000, 1333)
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/tours/${req.body.imageCover}`);
+
+  req.body.images = [];
+
+  await Promise.all(
+    files.images.map(async (file, i) => {
+      const filename = `tour-${req.params.id}-${Date.now()}-${i + 1}.jpeg`;
+
+      await sharp((file as Express.Multer.File).buffer)
+        .resize(2000, 1333)
+        .toFormat('jpeg')
+        .jpeg({ quality: 90 })
+        .toFile(`public/img/tours/${filename}`);
+
+      req.body.images.push(filename);
+    }),
+  );
+
+  next();
+});
 
 export const aliasTopTour = async (req: Request, _res: Response, next: NextFunction) => {
   const url = new URL(req.originalUrl, `http://${req.headers.host}`);
