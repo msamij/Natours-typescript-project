@@ -4,31 +4,23 @@ import pug from 'pug';
 import type { UserModelProps } from '../models/userModel.js';
 
 export class Email {
-  to: string;
-  firstName: string | undefined;
-  url: string;
-  from: string;
+  constructor(
+    private readonly to: string,
+    private readonly firstName: string | undefined,
+    private readonly url: string,
+    private readonly from: string = `Muhammad Sami <${process.env.EMAIL_FROM}>`,
+  ) {}
 
-  constructor(user: UserModelProps, url: string) {
-    this.to = user.email;
-    this.firstName = user.name.split(' ')[0];
-    this.url = url;
-    this.from = `Muhammad Sami <${process.env.EMAIL_FROM}>`;
+  static create(user: UserModelProps, url: string): Email {
+    return new Email(user.email, user.name.split(' ')[0], url);
   }
 
-  private newTransport() {
-    if (process.env.NODE_ENV === 'production') {
-      // Sendgrid
-      return;
-    }
-    return nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: process.env.EMAIL_PORT as unknown as number,
-      auth: {
-        user: process.env.EMAIL_USERNAME,
-        pass: process.env.EMAIL_PASSWORD,
-      },
-    });
+  async sendWelcome() {
+    await this.send('welcome', 'Welcome to the Natours Family!');
+  }
+
+  async sendPasswordReset() {
+    await this.send('passwordReset', 'Your password reset token (valid for only 10 minutes)');
   }
 
   private async send(template: string, subject: string) {
@@ -46,10 +38,21 @@ export class Email {
       text: htmlToText(html),
     };
 
-    await this.newTransport()?.sendMail(mailOptions);
+    await this.newTransport().sendMail(mailOptions);
   }
 
-  async sendWelcome() {
-    await this.send('welcome', 'Welcome to the Natours Family!');
+  private newTransport() {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('Production email transport not configured');
+    }
+
+    return nodemailer.createTransport({
+      host: process.env.EMAIL_HOST,
+      port: process.env.EMAIL_PORT as unknown as number,
+      auth: {
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
   }
 }

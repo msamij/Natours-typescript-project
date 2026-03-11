@@ -3,10 +3,10 @@ import { type NextFunction, type Request, type RequestHandler, type Response } f
 import jwt from 'jsonwebtoken';
 import { Types } from 'mongoose';
 import User from '../models/userModel.js';
-import { Email } from '../utils/email.js';
 import type { RequestWithToken, RequestWithUser } from '../types/Types.js';
 import { AppError } from '../utils/appError.js';
 import { catchAsync } from '../utils/catchAsync.js';
+import { Email } from '../utils/email.js';
 import { jwtVerifyPromisified } from '../utils/jwtVerifyPromisify.js';
 
 const signToken = (id: Types.ObjectId) => {
@@ -52,7 +52,7 @@ export const signup = catchAsync(async (req: Request, res: Response, _next: Next
   });
 
   const url = `${req.protocol}://${req.get('host')}/me`;
-  await new Email(newUser, url).sendWelcome();
+  await Email.create(newUser, url).sendWelcome();
 
   createSendToken(newUser, 201, res);
 });
@@ -155,17 +155,9 @@ export const forgotPassword = catchAsync(async (req: Request, res: Response, nex
   const resetToken = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
 
-  const resetURL = `${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${resetToken}`;
-
-  const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: 
-  ${resetURL}\nIf you didn't forget your password, please ignore this email!`;
-
   try {
-    // await sendEmail({
-    //   email: user.email,
-    //   subject: 'Your password reset token (valid for 10 min)',
-    //   message,
-    // });
+    const resetURL = `${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${resetToken}`;
+    await Email.create(user, resetURL).sendPasswordReset();
 
     res.status(200).json({
       status: 'success',
