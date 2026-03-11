@@ -7,6 +7,7 @@ import hpp from 'hpp';
 import morgan from 'morgan';
 import path from 'path';
 import { errorHandler } from './controllers/errorController.js';
+import bookingRouter from './routes/bookingRoutes.js';
 import reviewRouter from './routes/reviewRoutes.js';
 import tourRouter from './routes/tourRoutes.js';
 import userRouter from './routes/userRoutes.js';
@@ -81,6 +82,7 @@ app.use('/', viewRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
+app.use('/api/v1/bookings', bookingRouter);
 
 app.all('{/*splat}', (req, _res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
