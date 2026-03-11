@@ -89,6 +89,8 @@ type UserSchemaInferred = mongoose.InferSchemaType<typeof userSchema>;
 type UserDocument = mongoose.HydratedDocument<UserSchemaInferred, UserMethods>;
 type UserQueryContext = mongoose.Query<any, UserDocument, {}>;
 
+export type UserModelProps = Pick<UserDocument, 'name' | 'email'>;
+
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 12);

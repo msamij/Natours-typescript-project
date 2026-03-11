@@ -1,23 +1,55 @@
+import htmlToText from 'html-to-text';
 import nodemailer from 'nodemailer';
-import type { SendEmailOptions } from '../types/Types.js';
+import pug from 'pug';
+import type { UserModelProps } from '../models/userModel.js';
 
-export const sendEmail = async (options: SendEmailOptions) => {
-  const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    // (port property defined as number | undefined), to make typescript happy I am aliasing it as a number.
-    port: process.env.EMAIL_PORT as unknown as number,
-    auth: {
-      user: process.env.EMAIL_USERNAME,
-      pass: process.env.EMAIL_PASSWORD,
-    },
-  });
+export class Email {
+  to: string;
+  firstName: string | undefined;
+  url: string;
+  from: string;
 
-  const mailOptions = {
-    from: 'Muhammad Sami <msamiaj20@gmail.com>',
-    to: options.email,
-    subject: options.subject,
-    text: options.message,
-  };
+  constructor(user: UserModelProps, url: string) {
+    this.to = user.email;
+    this.firstName = user.name.split(' ')[0];
+    this.url = url;
+    this.from = `Muhammad Sami <${process.env.EMAIL_FROM}>`;
+  }
 
-  await transporter.sendMail(mailOptions);
-};
+  async send(template: string, subject: string) {
+    const html = pug.renderFile(`${import.meta.dirname}/../views/email/${template}.pug`, {
+      firstName: this.firstName,
+      url: this.url,
+      subject,
+    });
+
+    const mailOptions = {
+      from: this.from,
+      to: this.to,
+      subject,
+      html,
+      text: htmlToText.htmlToText(html),
+    };
+
+    await this.createTransport()?.sendMail(mailOptions);
+  }
+
+  async sendWelcome() {
+    await this.send('welcome', 'Welcome to the Natours Family!');
+  }
+
+  private createTransport() {
+    if (process.env.NODE_ENV === 'production') {
+      // Sendgrid
+      return;
+    }
+    return nodemailer.createTransport({
+      host: process.env.EMAIL_HOST,
+      port: process.env.EMAIL_PORT as unknown as number,
+      auth: {
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+  }
+}
