@@ -38,7 +38,7 @@ export const getCheckoutSession = catchAsync(async (req: RequestWithUser, res: R
   });
 });
 
-export const createBookingCheckOut = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+export const createBookingCheckout = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { tour, user, price } = req.query;
   if (!tour && !user && !price) {
     return next();
