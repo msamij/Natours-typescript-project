@@ -3,6 +3,7 @@ import Stripe from 'stripe';
 import Tour from '../models/tourModel.js';
 import type { RequestWithUser } from '../types/Types.js';
 import { catchAsync } from '../utils/catchAsync.js';
+import { Booking } from '../models/bookingModel.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
@@ -43,4 +44,7 @@ export const createBookingCheckout = catchAsync(async (req: Request, res: Respon
   if (!tour && !user && !price) {
     return next();
   }
+
+  await Booking.create({ tour, user, price });
+  res.redirect(req.originalUrl.split('?')[0] as string);
 });
