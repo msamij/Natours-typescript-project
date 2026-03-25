@@ -1,20 +1,18 @@
-import type { NextFunction, Request, Response } from 'express';
-import { AppError } from '../utils/appError.js';
+import type { NextFunction, Response } from 'express';
 import Stripe from 'stripe';
 import Tour from '../models/tourModel.js';
-import { catchAsync } from '../utils/catchAsync.js';
-import * as factory from './handlerFactory.js';
 import type { RequestWithUser } from '../types/Types.js';
+import { catchAsync } from '../utils/catchAsync.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
-export const getCheckoutSession = catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+export const getCheckoutSession = catchAsync(async (req: RequestWithUser, res: Response, _next: NextFunction) => {
   const tour = await Tour.findById(req.params.tourId);
 
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
     payment_method_types: ['card'],
-    success_url: `${req.protocol}://${req.get('host')}/`,
+    success_url: `${req.protocol}://${req.get('host')}/?tour=${req.params.tourId}&user=${req.user.id}&price=${tour?.price}`,
     cancel_url: `${req.protocol}://${req.get('host')}/tour/${tour?.slug}`,
     customer_email: req.user.email,
     client_reference_id: req.params.tourId,
