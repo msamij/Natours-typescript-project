@@ -1,4 +1,4 @@
-import type { NextFunction, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import Stripe from 'stripe';
 import Tour from '../models/tourModel.js';
 import type { RequestWithUser } from '../types/Types.js';
@@ -36,4 +36,11 @@ export const getCheckoutSession = catchAsync(async (req: RequestWithUser, res: R
     status: 'success',
     session,
   });
+});
+
+export const createBookingCheckOut = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const { tour, user, price } = req.query;
+  if (!tour && !user && !price) {
+    return next();
+  }
 });

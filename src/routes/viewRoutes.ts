@@ -1,10 +1,11 @@
 import express, { Router } from 'express';
 import { isLoggedIn, protect } from '../controllers/authController.js';
 import * as viewsController from '../controllers/viewsController.js';
+import { createBookingCheckOut } from '../controllers/bookingController.js';
 
 const router: Router = express.Router();
 
-router.get('/', isLoggedIn, viewsController.getOverview);
+router.get('/', createBookingCheckOut, isLoggedIn, viewsController.getOverview);
 router.get('/tour/:slug', isLoggedIn, viewsController.getTour);
 router.get('/login', isLoggedIn, viewsController.getLoginForm);
 router.get('/me', protect, viewsController.getAccount);
