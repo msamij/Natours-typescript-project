@@ -1,7 +1,7 @@
 import express, { Router } from 'express';
 import { isLoggedIn, protect } from '../controllers/authController.js';
-import * as viewsController from '../controllers/viewsController.js';
 import { createBookingCheckout } from '../controllers/bookingController.js';
+import * as viewsController from '../controllers/viewsController.js';
 
 const router: Router = express.Router();
 
