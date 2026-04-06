@@ -43,7 +43,7 @@ export const getAccount = (_req: Request, res: Response) => {
 };
 
 export const getMyTours = catchAsync(async (req: RequestWithUser, res: Response, _next: NextFunction) => {
-  const bookings = await Booking.find({ tour: req.user.id });
+  const bookings = await Booking.find({ user: req.user.id });
 
   const tourIDs = bookings.map(el => el.tour);
   const tours = await Tour.find({ _id: { $in: tourIDs } });
