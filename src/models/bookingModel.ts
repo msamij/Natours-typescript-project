@@ -31,6 +31,7 @@ type BookingQueryContext = mongoose.Query<any, BookingDocument, {}>;
 
 bookingSchema.pre<BookingQueryContext>(/^find/, function (next) {
   this.populate('user').populate({ path: 'tour', select: 'name' });
+  next();
 });
 
 export const Booking = mongoose.model('Booking', bookingSchema);
